@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import LoginModal from './LoginModal';
+import ThemeSwitcher from '@/components/theme-system/ThemeSwitcher';
 
 export default function UserCenter() {
   const { user, isLoading, logout } = useAuth();
@@ -82,6 +83,13 @@ export default function UserCenter() {
                   {displayName}
                 </p>
                 <p className='text-xs text-slate-500 truncate'>{user.email}</p>
+              </div>
+
+              <div className='p-2 border-b border-slate-100'>
+                <div className='flex items-center justify-between px-3 py-1.5 text-slate-500 text-xs'>
+                  <span><i className='ri-palette-line mr-1' />主题</span>
+                  <ThemeSwitcher compact />
+                </div>
               </div>
 
               <div className='p-2'>

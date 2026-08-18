@@ -99,5 +99,11 @@ jobs:
           curl -sI http://localhost:3201/ | grep -qi 'x-content-type-options'
           echo "── i18n 英文路由"
           curl -sf -o /dev/null -w "%{http_code}\n" http://localhost:3201/en
+          echo "── 根功能页（防 i18n 重写回归）"
+          for p in settings badges profile schedule; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3201/$p)
+            [ "$code" = "200" ] || { echo "$p -> $code"; exit 1; }
+          done
+          echo "settings/badges/profile/schedule 全部 200"
           echo "全部冒烟通过"
           kill $SERVER_PID

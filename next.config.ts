@@ -14,9 +14,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 
   // 图片：沿用 .mjs 的 unoptimized 策略（避免远程图片优化器依赖）
   images: {

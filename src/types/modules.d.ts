@@ -9,14 +9,6 @@ declare module 'react-toastify' {
   export { toast };
 }
 
-declare module '@mui/material' {
-  export * from '@mui/material';
-}
-
-declare module '@mui/icons-material' {
-  export * from '@mui/icons-material';
-}
-
 declare module 'react-router-dom' {
   export function useNavigate(): (to: string) => void;
 }

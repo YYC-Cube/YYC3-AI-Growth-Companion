@@ -3,6 +3,7 @@
 import type React from 'react';
 
 import { useState } from 'react';
+import ThemeSwitcher from '@/components/theme-system/ThemeSwitcher';
 import { motion } from 'framer-motion';
 import Navigation from '@/components/Navigation';
 import PageHeader from '@/components/headers/PageHeader';
@@ -87,12 +88,28 @@ export default function SettingsPage() {
             </motion.div>
           </section>
 
+          {/* 外观与主题 */}
+          <SettingsSection
+            title='外观与主题'
+            icon='ri-palette-fill'
+            iconColor='text-amber-500'
+            index={0}
+          >
+            <SettingsItem
+              icon='ri-contrast-drop-fill'
+              iconColor='text-amber-400'
+              title='界面主题'
+              subtitle='暖阳 · 赛博霓虹 · 液态翡翠（选择即时生效并记忆）'
+              action={<ThemeSwitcher />}
+            />
+          </SettingsSection>
+
           {/* 账户与安全 */}
           <SettingsSection
             title='账户与安全'
             icon='ri-user-settings-fill'
             iconColor='text-blue-500'
-            index={0}
+            index={1}
           >
             <SettingsItem
               icon='ri-account-circle-fill'
@@ -121,7 +138,7 @@ export default function SettingsPage() {
             title='学习偏好'
             icon='ri-book-mark-fill'
             iconColor='text-purple-500'
-            index={1}
+            index={2}
           >
             <SettingsItem
               icon='ri-eye-fill'

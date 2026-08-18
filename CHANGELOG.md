@@ -3,6 +3,20 @@
 本项目所有显著变更记录于此。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [3.3.0] - 2026-08-19
+
+### 新增
+- **统一主题系统**：CSS 语义 token 三主题（default 暖阳 / cyberpunk 赛博霓虹 / liquid 液态翡翠，后两者提炼自 Figma 设计稿色板），`<html data-theme>` 驱动 + next-themes 持久化；设置页"外观与主题"区块 + UserCenter 快捷切换
+- 主题系统规范文档（docs/standards/theme-system.md：架构图/主题规格/扩展四步/历史清理记录）
+
+### 修复
+- **重大回归**：next-intl as-needed 中间件把全部无前缀路径重写为 /zh/<path>，而 [locale] 子树仅有 3 页，导致 settings/badges/profile 等所有根功能页 404（自 i18n 接线起潜伏，旧冒烟只测 / 与 /en 而漏网）——中间件改为仅对 [locale] 实际拥有的路由做语言路由；CI 冒烟补 4 个根页面断言
+- 移除 Next 16 已废弃的 next.config eslint 键
+
+### 移除
+- MUI 全家（components/material + @mui/@emotion 依赖）：全局挂载但零真实消费，默认蓝主题与项目无关
+- 两个从未被挂载的旧 ThemeProvider 死代码
+
 ## [3.2.1] - 2026-08-19
 
 ### 新增

@@ -24,6 +24,7 @@
 | [TYPOGRAPHY-GUIDE](standards/TYPOGRAPHY-GUIDE.md) | 排版 |
 | [CARD-STYLES-GUIDE](standards/CARD-STYLES-GUIDE.md) | 卡片样式 |
 | [ESLINT-CUSTOM-RULES](standards/ESLINT-CUSTOM-RULES.md) | 自定义 lint 规则 |
+| [Theme System](standards/theme-system.md) | 统一主题系统（三主题/token/扩展） |
 
 ## 🗄 历史档案（只读，不再更新）
 

@@ -393,3 +393,103 @@
 
 /* 统一图标彩色响应交互样式 */
 @import '../styles/icon-interactive.css';
+
+/* ============================================================
+   统一主题系统（v3.3 · YanYuCloudCube ™）
+   三套主题：default 暖阳 / cyberpunk 赛博霓虹 / liquid 液态翡翠
+   —— 语义 token 单一来源，主题经 <html data-theme> 切换。
+   规格与扩展指南见 docs/standards/theme-system.md
+   ============================================================ */
+
+:root {
+  /* 表面与文字（default：暖阳浅色） */
+  --bg-app: #fffbeb;            /* 页面底（amber-50） */
+  --bg-surface: #ffffff;
+  --bg-surface-soft: #fef3c7;   /* amber-100 */
+  --fg-default: #1f2937;
+  --fg-muted: #6b7280;
+  --border-soft: #f3e8c8;
+  /* 主题特征色（default 与上方品牌色一致） */
+  --theme-accent: #f59e0b;
+  --theme-accent-fg: #ffffff;
+  --theme-glow: rgba(245, 158, 11, 0.18);
+}
+
+[data-theme='cyberpunk'] {
+  /* 赛博霓虹（提炼自 themes/cyberpunk Figma 参考） */
+  --color-primary: #00f0ff;
+  --color-primary-dark: #00c4d1;
+  --color-primary-light: #5ff6ff;
+  --color-secondary-purple: #ff2d95;
+  --color-secondary-pink: #ff2d95;
+  --bg-app: #0a0a0f;
+  --bg-surface: #12121c;
+  --bg-surface-soft: #1a1a28;
+  --fg-default: #e5e7eb;
+  --fg-muted: #9ca3af;
+  --border-soft: #26263a;
+  --theme-accent: #00f0ff;
+  --theme-accent-fg: #05050a;
+  --theme-glow: rgba(0, 240, 255, 0.22);
+  color-scheme: dark;
+}
+
+[data-theme='liquid'] {
+  /* 液态翡翠（提炼自 themes/liquid Figma 参考） */
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #34d399;
+  --color-secondary-purple: #14b8a6;
+  --color-secondary-pink: #2dd4bf;
+  --bg-app: #f0fdf9;            /* teal-50 */
+  --bg-surface: #ffffff;
+  --bg-surface-soft: #ccfbf1;   /* teal-100 */
+  --fg-default: #134e4a;
+  --fg-muted: #5f7470;
+  --border-soft: #b8ece2;
+  --theme-accent: #10b981;
+  --theme-accent-fg: #ffffff;
+  --theme-glow: rgba(16, 185, 129, 0.18);
+}
+
+/* 主题切换的全局过渡（尊重减少动效偏好） */
+body {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+/* 非默认主题下的表面接管：
+   现存页面大量使用 Tailwind 浅色类（bg-amber-50/bg-white 等），
+   主题模式下以属性选择器做有限覆盖，保证三主题即时可见；
+   全面 token 化列于主题路线图。 */
+[data-theme='cyberpunk'] body,
+[data-theme='liquid'] body {
+  background-color: var(--bg-app);
+  color: var(--fg-default);
+}
+
+[data-theme='cyberpunk'] .bg-white,
+[data-theme='liquid'] .bg-white {
+  background-color: var(--bg-surface);
+  color: var(--fg-default);
+}
+
+[data-theme='cyberpunk'] .bg-amber-50,
+[data-theme='cyberpunk'] .bg-orange-50,
+[data-theme='cyberpunk'] .bg-yellow-50,
+[data-theme='cyberpunk'] .bg-sky-50,
+[data-theme='cyberpunk'] .bg-sky-100,
+[data-theme='cyberpunk'] .bg-red-50,
+[data-theme='cyberpunk'] .bg-green-50,
+[data-theme='cyberpunk'] .bg-blue-50,
+[data-theme='cyberpunk'] .bg-gray-50,
+[data-theme='cyberpunk'] .bg-slate-50 {
+  background-color: var(--bg-surface-soft);
+}
+
+[data-theme='liquid'] .bg-amber-50,
+[data-theme='liquid'] .bg-orange-50,
+[data-theme='liquid'] .bg-yellow-50 {
+  background-color: var(--bg-surface-soft);
+}
