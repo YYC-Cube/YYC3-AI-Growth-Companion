@@ -1,9 +1,10 @@
 // SQLite数据库客户端 - 真正的数据库解决方案
-// 使用Bun内置的SQLite支持，提供高性能的数据持久化
+// 使用 Node.js 内置的 node:sqlite（Node >= 22.13），文件级持久化
 
-import { Database } from 'bun:sqlite';
-import type { Child, LocalStorageGrowthRecord, Assessment, Milestone } from './client';
-import { v4 as uuidv4 } from 'uuid';
+import { DatabaseSync } from "node:sqlite"
+import { existsSync, mkdirSync } from "node:fs"
+import { dirname } from "node:path"
+import type { Child, GrowthRecord, Assessment, Milestone } from "./client"
 
 // 数据库表创建SQL
 const CREATE_TABLES_SQL = `
@@ -145,228 +146,232 @@ CREATE INDEX IF NOT EXISTS idx_homework_tasks_due_date ON homework_tasks(due_dat
 CREATE INDEX IF NOT EXISTS idx_homework_tasks_status ON homework_tasks(status);
 CREATE INDEX IF NOT EXISTS idx_courses_subject ON courses(subject);
 CREATE INDEX IF NOT EXISTS idx_stage_transitions_child_id ON stage_transitions(child_id);
-`;
+`
 
 export class SQLiteDatabase {
-  private db: Database;
+  private db: DatabaseSync
 
-  constructor(dbPath: string = './yyc3_database.db') {
-    this.db = new Database(dbPath, { create: true, strict: true });
-    this.initializeDatabase();
+  constructor(dbPath: string = ":memory:") {
+    // 确保父目录存在（文件型数据库）
+    const dir = dirname(dbPath)
+    if (dbPath !== ":memory:" && dir && dir !== "." && !existsSync(dir)) {
+      mkdirSync(dir, { recursive: true })
+    }
+    this.db = new DatabaseSync(dbPath)
+    this.initializeDatabase()
   }
 
   private initializeDatabase() {
     try {
-      // 创建所有表
-      this.db.exec(CREATE_TABLES_SQL);
+      // 并发防护前置：等待锁 + WAL 模式
+      this.db.exec("PRAGMA busy_timeout = 8000")
+      this.db.exec("PRAGMA journal_mode = WAL")
+
+      // 创建所有表（并发初始化时短暂锁库则重试）
+      let attempts = 0
+      while (true) {
+        try {
+          this.db.exec(CREATE_TABLES_SQL)
+          break
+        } catch (err) {
+          if (++attempts >= 5) throw err
+          const msg = String(err)
+          if (msg.includes("locked") || msg.includes("busy")) {
+            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200)
+            continue
+          }
+          throw err
+        }
+      }
 
       // 启用外键约束
-      this.db.exec('PRAGMA foreign_keys = ON');
+      this.db.exec("PRAGMA foreign_keys = ON")
 
-      // 设置WAL模式以提高并发性能
-      this.db.exec('PRAGMA journal_mode = WAL');
-
-      console.log('✅ SQLite数据库初始化成功');
+      console.log("✅ SQLite数据库初始化成功")
     } catch (error) {
-      console.error('❌ SQLite数据库初始化失败:', error);
-      throw error;
+      console.error("❌ SQLite数据库初始化失败:", error)
+      throw error
     }
   }
 
   // 通用查询方法
-  async findMany<T>(
-    table: string,
-    conditions: Record<string, unknown> = {}
-  ): Promise<T[]> {
+  async findMany<T>(table: string, conditions: Record<string, unknown> = {}): Promise<T[]> {
     try {
-      let query = `SELECT * FROM ${table}`;
-      const params: unknown[] = [];
+      let query = `SELECT * FROM ${table}`
+      const params: unknown[] = []
 
       if (Object.keys(conditions).length > 0) {
         const whereClause = Object.keys(conditions)
-          .map((key, index) => `${key} = $${index + 1}`)
-          .join(' AND ');
-        query += ` WHERE ${whereClause}`;
-        params.push(...Object.values(conditions));
+          .map((key, index) => `${key} = ?`)
+          .join(" AND ")
+        query += ` WHERE ${whereClause}`
+        params.push(...Object.values(conditions))
       }
 
-      const stmt = this.db.query(query);
-      return stmt.all(...params) as T[];
+      const stmt = this.db.prepare(query)
+      return stmt.all(...params) as T[]
     } catch (error) {
-      console.error(`查询失败 ${table}:`, error);
-      return [];
+      console.error(`查询失败 ${table}:`, error)
+      return []
     }
   }
 
   async findOne<T>(table: string, id: string): Promise<T | null> {
     try {
-      const stmt = this.db.query(`SELECT * FROM ${table} WHERE id = $1`);
-      const result = stmt.get(id) as T | undefined;
-      return result || null;
+      const stmt = this.db.prepare(`SELECT * FROM ${table} WHERE id = ?`)
+      const result = stmt.get(id) as T | undefined
+      return result || null
     } catch (error) {
-      console.error(`查询单条记录失败 ${table}:`, error);
-      return null;
+      console.error(`查询单条记录失败 ${table}:`, error)
+      return null
     }
   }
 
-  async findFirst<T>(
-    table: string,
-    conditions: Record<string, unknown>
-  ): Promise<T | null> {
+  async findFirst<T>(table: string, conditions: Record<string, unknown>): Promise<T | null> {
     try {
-      const results = await this.findMany<T>(table, conditions);
-      return results[0] || null;
+      const results = await this.findMany<T>(table, conditions)
+      return results[0] || null
     } catch (error) {
-      console.error(`查询首条记录失败 ${table}:`, error);
-      return null;
+      console.error(`查询首条记录失败 ${table}:`, error)
+      return null
     }
   }
 
   async create<T extends Record<string, unknown>>(
     table: string,
-    data: Omit<T, 'id' | 'created_at'>
+    data: Omit<T, "id" | "created_at">
   ): Promise<T> {
     try {
-      const id = uuidv4();
-      const created_at = new Date().toISOString();
-      const item = { ...data, id, created_at } as T;
+      const id = crypto.randomUUID()
+      const created_at = new Date().toISOString()
+      const item = { ...data, id, created_at } as T
 
-      const columns = Object.keys(item).join(', ');
+      const columns = Object.keys(item).join(", ")
       const placeholders = Object.keys(item)
-        .map((_, index) => `$${index + 1}`)
-        .join(', ');
-      const values = Object.values(item);
+        .map(() => `?`)
+        .join(", ")
+      const values = Object.values(item)
 
-      const query = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
-      const stmt = this.db.query(query);
-      stmt.run(...values);
+      const query = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`
+      const stmt = this.db.prepare(query)
+      stmt.run(...values)
 
-      return item;
+      return item
     } catch (error) {
-      console.error(`创建记录失败 ${table}:`, error);
-      throw error;
+      console.error(`创建记录失败 ${table}:`, error)
+      throw error
     }
   }
 
   async createMany<T extends Record<string, unknown>>(
     table: string,
-    dataArray: Omit<T, 'id' | 'created_at'>[]
+    dataArray: Omit<T, "id" | "created_at">[]
   ): Promise<T[]> {
     try {
-      const items = dataArray.map(data => ({
+      const items = dataArray.map((data) => ({
         ...data,
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         created_at: new Date().toISOString(),
-      })) as T[];
+      })) as T[]
 
       for (const item of items) {
-        await this.create(table, item);
+        await this.create(table, item)
       }
 
-      return items;
+      return items
     } catch (error) {
-      console.error(`批量创建记录失败 ${table}:`, error);
-      throw error;
+      console.error(`批量创建记录失败 ${table}:`, error)
+      throw error
     }
   }
 
   async update<T extends Record<string, unknown>>(
     table: string,
     id: string,
-    data: Partial<Omit<T, 'id' | 'created_at'>>
+    data: Partial<Omit<T, "id" | "created_at">>
   ): Promise<T | null> {
     try {
-      const updated_at = new Date().toISOString();
-      const updateData = { ...data, updated_at };
+      const updated_at = new Date().toISOString()
+      const updateData = { ...data, updated_at }
 
       const columns = Object.keys(updateData)
-        .map((key, index) => `${key} = $${index + 1}`)
-        .join(', ');
-      const values = [...Object.values(updateData), id];
+        .map((key, index) => `${key} = ?`)
+        .join(", ")
+      const values = [...Object.values(updateData), id]
 
-      const query = `UPDATE ${table} SET ${columns} WHERE id = $${columns.length + 1}`;
-      const stmt = this.db.query(query);
-      stmt.run(...values);
+      const query = `UPDATE ${table} SET ${columns} WHERE id = ?`
+      const stmt = this.db.prepare(query)
+      stmt.run(...values)
 
-      return this.findOne<T>(table, id);
+      return this.findOne<T>(table, id)
     } catch (error) {
-      console.error(`更新记录失败 ${table}:`, error);
-      return null;
+      console.error(`更新记录失败 ${table}:`, error)
+      return null
     }
   }
 
   async upsert<T extends Record<string, unknown>>(
     table: string,
     id: string,
-    data: Omit<T, 'id' | 'created_at' | 'updated_at'>
+    data: Omit<T, "id" | "created_at" | "updated_at">
   ): Promise<T> {
     try {
-      const existing = await this.findOne<T>(table, id);
+      const existing = await this.findOne<T>(table, id)
       if (existing) {
-        return (await this.update<T>(
-          table,
-          id,
-          data as Partial<Omit<T, 'id'>>
-        )) as T;
+        return (await this.update<T>(table, id, data as Partial<Omit<T, "id">>)) as T
       }
-      return this.create<T>(table, { ...data, id } as Omit<
-        T,
-        'id' | 'created_at'
-      >);
+      return this.create<T>(table, { ...data, id } as Omit<T, "id" | "created_at">)
     } catch (error) {
-      console.error(`upsert记录失败 ${table}:`, error);
-      throw error;
+      console.error(`upsert记录失败 ${table}:`, error)
+      throw error
     }
   }
 
   async delete(table: string, id: string): Promise<boolean> {
     try {
-      const stmt = this.db.query(`DELETE FROM ${table} WHERE id = $1`);
-      const result = stmt.run(id);
-      return result.changes > 0;
+      const stmt = this.db.prepare(`DELETE FROM ${table} WHERE id = ?`)
+      const result = stmt.run(id)
+      return result.changes > 0
     } catch (error) {
-      console.error(`删除记录失败 ${table}:`, error);
-      return false;
+      console.error(`删除记录失败 ${table}:`, error)
+      return false
     }
   }
 
   async deleteMany(table: string, ids: string[]): Promise<number> {
     try {
-      if (ids.length === 0) return 0;
+      if (ids.length === 0) return 0
 
-      const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
-      const query = `DELETE FROM ${table} WHERE id IN (${placeholders})`;
-      const stmt = this.db.query(query);
-      const result = stmt.run(...ids);
-      return result.changes;
+      const placeholders = ids.map(() => `?`).join(", ")
+      const query = `DELETE FROM ${table} WHERE id IN (${placeholders})`
+      const stmt = this.db.prepare(query)
+      const result = stmt.run(...ids)
+      return result.changes
     } catch (error) {
-      console.error(`批量删除记录失败 ${table}:`, error);
-      return 0;
+      console.error(`批量删除记录失败 ${table}:`, error)
+      return 0
     }
   }
 
-  async count(
-    table: string,
-    conditions: Record<string, unknown> = {}
-  ): Promise<number> {
+  async count(table: string, conditions: Record<string, unknown> = {}): Promise<number> {
     try {
-      let query = `SELECT COUNT(*) as count FROM ${table}`;
-      const params: unknown[] = [];
+      let query = `SELECT COUNT(*) as count FROM ${table}`
+      const params: unknown[] = []
 
       if (Object.keys(conditions).length > 0) {
         const whereClause = Object.keys(conditions)
-          .map((key, index) => `${key} = $${index + 1}`)
-          .join(' AND ');
-        query += ` WHERE ${whereClause}`;
-        params.push(...Object.values(conditions));
+          .map((key, index) => `${key} = ?`)
+          .join(" AND ")
+        query += ` WHERE ${whereClause}`
+        params.push(...Object.values(conditions))
       }
 
-      const stmt = this.db.query(query);
-      const result = stmt.get(...params) as { count: number };
-      return result.count;
+      const stmt = this.db.prepare(query)
+      const result = stmt.get(...params) as { count: number }
+      return result.count
     } catch (error) {
-      console.error(`统计记录数失败 ${table}:`, error);
-      return 0;
+      console.error(`统计记录数失败 ${table}:`, error)
+      return 0
     }
   }
 
@@ -374,194 +379,195 @@ export class SQLiteDatabase {
   async paginate<T>(
     table: string,
     options: {
-      page: number;
-      pageSize: number;
-      filter?: Record<string, unknown>;
-      sort?: string;
-      order?: 'ASC' | 'DESC';
+      page: number
+      pageSize: number
+      filter?: Record<string, unknown>
+      sort?: string
+      order?: "ASC" | "DESC"
     }
   ): Promise<{ data: T[]; total: number; totalPages: number }> {
     try {
-      const {
-        page,
-        pageSize,
-        filter = {},
-        sort = 'created_at',
-        order = 'DESC',
-      } = options;
-      const offset = (page - 1) * pageSize;
+      const { page, pageSize, filter = {}, sort = "created_at", order = "DESC" } = options
+      const offset = (page - 1) * pageSize
 
       // 查询总数
-      const total = await this.count(table, filter);
+      const total = await this.count(table, filter)
 
       // 查询分页数据
-      let query = `SELECT * FROM ${table}`;
-      const params: unknown[] = [];
+      let query = `SELECT * FROM ${table}`
+      const params: unknown[] = []
 
       if (Object.keys(filter).length > 0) {
         const whereClause = Object.keys(filter)
-          .map((key, index) => `${key} = $${index + 1}`)
-          .join(' AND ');
-        query += ` WHERE ${whereClause}`;
-        params.push(...Object.values(filter));
+          .map((key, index) => `${key} = ?`)
+          .join(" AND ")
+        query += ` WHERE ${whereClause}`
+        params.push(...Object.values(filter))
       }
 
-      query += ` ORDER BY ${sort} ${order}`;
-      query += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-      params.push(pageSize, offset);
+      query += ` ORDER BY ${sort} ${order}`
+      query += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`
+      params.push(pageSize, offset)
 
-      const stmt = this.db.query(query);
-      const data = stmt.all(...params) as T[];
+      const stmt = this.db.prepare(query)
+      const data = stmt.all(...params) as T[]
 
-      const totalPages = Math.ceil(total / pageSize);
+      const totalPages = Math.ceil(total / pageSize)
 
-      return { data, total, totalPages };
+      return { data, total, totalPages }
     } catch (error) {
-      console.error(`分页查询失败 ${table}:`, error);
-      return { data: [], total: 0, totalPages: 0 };
+      console.error(`分页查询失败 ${table}:`, error)
+      return { data: [], total: 0, totalPages: 0 }
     }
   }
 
   // 原子性事务支持
-  transaction<T>(callback: () => Promise<T>): Promise<T> {
-    return this.db.transaction(callback) as Promise<T>;
+  async transaction<T>(callback: () => Promise<T>): Promise<T> {
+    this.db.exec("BEGIN")
+    try {
+      const result = await callback()
+      this.db.exec("COMMIT")
+      return result
+    } catch (error) {
+      this.db.exec("ROLLBACK")
+      throw error
+    }
   }
 
   // 数据库备份
   backup(backupPath: string): boolean {
     try {
-      this.db.backup(backupPath);
-      console.log(`✅ 数据库备份成功: ${backupPath}`);
-      return true;
+      const dir = dirname(backupPath)
+      if (dir && dir !== "." && !existsSync(dir)) {
+        mkdirSync(dir, { recursive: true })
+      }
+      this.db.exec(`VACUUM INTO '${backupPath.replace(/'/g, "''")}'`)
+      console.log(`✅ 数据库备份成功: ${backupPath}`)
+      return true
     } catch (error) {
-      console.error(`❌ 数据库备份失败:`, error);
-      return false;
+      console.error(`❌ 数据库备份失败:`, error)
+      return false
     }
   }
 
   // 数据库优化
   optimize(): void {
     try {
-      this.db.exec('VACUUM');
-      this.db.exec('ANALYZE');
-      console.log('✅ 数据库优化完成');
+      this.db.exec("VACUUM")
+      this.db.exec("ANALYZE")
+      console.log("✅ 数据库优化完成")
     } catch (error) {
-      console.error('❌ 数据库优化失败:', error);
+      console.error("❌ 数据库优化失败:", error)
     }
   }
 
   // 关闭数据库连接
   close(): void {
-    this.db.close();
-    console.log('✅ 数据库连接已关闭');
+    this.db.close()
+    console.log("✅ 数据库连接已关闭")
   }
 
   // 初始化示例数据
   async seedMockData(): Promise<void> {
     try {
       // 检查是否已有数据
-      const userCount = await this.count('users');
+      const userCount = await this.count("users")
       if (userCount > 0) {
-        console.log('📋 数据库已有数据，跳过初始化');
-        return;
+        console.log("📋 数据库已有数据，跳过初始化")
+        return
       }
 
-      console.log('🌱 开始初始化示例数据...');
+      console.log("🌱 开始初始化示例数据...")
 
       await this.transaction(async () => {
         // 创建示例用户
-        const user = await this.create('users', {
-          email: 'parent@yyc3.com',
-          name: '张女士',
-          avatar_url: '/placeholder.svg?height=100&width=100',
-          role: 'parent',
-        });
+        const user = await this.create("users", {
+          email: "parent@yyc3.com",
+          name: "张女士",
+          avatar_url: "/placeholder.svg?height=100&width=100",
+          role: "parent",
+        })
 
         // 创建示例儿童档案
-        const child = await this.create('children', {
+        const child = await this.create("children", {
           user_id: user.id,
-          name: '小语',
-          nickname: '小语',
-          birth_date: '2018-09-15',
-          gender: 'female',
-          avatar_url: '/placeholder.svg?height=100&width=100',
-          current_stage: '6-9岁学术奠基期',
-        });
+          name: "小语",
+          nickname: "小语",
+          birth_date: "2018-09-15",
+          gender: "female",
+          avatar_url: "/placeholder.svg?height=100&width=100",
+          current_stage: "6-9岁学术奠基期",
+        })
 
         // 创建示例成长记录
-        await this.create('growth_records', {
+        await this.create("growth_records", {
           child_id: child.id,
-          type: 'milestone',
-          title: '第一次独立完成数学作业',
-          content:
-            '今天小语第一次不需要任何帮助就完成了所有数学作业，展现了很强的独立学习能力。',
+          type: "milestone",
+          title: "第一次独立完成数学作业",
+          content: "今天小语第一次不需要任何帮助就完成了所有数学作业，展现了很强的独立学习能力。",
           media_urls: JSON.stringify([]),
-          tags: JSON.stringify(['学习', '独立']),
-          emotion: 'proud',
+          tags: JSON.stringify(["学习", "独立"]),
+          emotion: "proud",
           recorded_at: new Date().toISOString(),
-        });
+        })
 
         // 创建示例作业任务
-        await this.createMany('homework_tasks', [
+        await this.createMany("homework_tasks", [
           {
             child_id: child.id,
-            subject: '数学',
-            title: '完成练习册第15-18页',
-            description: '重点复习分数加减法',
-            due_date: new Date(Date.now() + 86400000)
-              .toISOString()
-              .split('T')[0],
-            status: 'in_progress',
-            priority: 'high',
+            subject: "数学",
+            title: "完成练习册第15-18页",
+            description: "重点复习分数加减法",
+            due_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+            status: "in_progress",
+            priority: "high",
           },
           {
             child_id: child.id,
-            subject: '语文',
-            title: '背诵古诗《春晓》',
-            description: '理解诗意并能默写',
-            due_date: new Date(Date.now() + 172800000)
-              .toISOString()
-              .split('T')[0],
-            status: 'pending',
-            priority: 'normal',
+            subject: "语文",
+            title: "背诵古诗《春晓》",
+            description: "理解诗意并能默写",
+            due_date: new Date(Date.now() + 172800000).toISOString().split("T")[0],
+            status: "pending",
+            priority: "normal",
           },
-        ]);
+        ])
 
         // 创建示例课程
-        await this.createMany('courses', [
+        await this.createMany("courses", [
           {
-            title: '趣味数学入门',
-            description: '通过游戏和故事学习基础数学概念',
-            subject: '数学',
-            age_group: '6-9岁',
+            title: "趣味数学入门",
+            description: "通过游戏和故事学习基础数学概念",
+            subject: "数学",
+            age_group: "6-9岁",
             difficulty_level: 2,
             content: JSON.stringify({
-              chapters: ['数字认知', '简单加法', '趣味减法', '实际应用'],
-              duration: '4周',
+              chapters: ["数字认知", "简单加法", "趣味减法", "实际应用"],
+              duration: "4周",
             }),
             media_urls: JSON.stringify([]),
-            tags: JSON.stringify(['基础', '游戏化', '互动']),
+            tags: JSON.stringify(["基础", "游戏化", "互动"]),
           },
           {
-            title: '语文阅读启蒙',
-            description: '培养阅读兴趣和理解能力',
-            subject: '语文',
-            age_group: '6-9岁',
+            title: "语文阅读启蒙",
+            description: "培养阅读兴趣和理解能力",
+            subject: "语文",
+            age_group: "6-9岁",
             difficulty_level: 1,
             content: JSON.stringify({
-              chapters: ['字母认知', '拼音基础', '简单词汇', '阅读理解'],
-              duration: '6周',
+              chapters: ["字母认知", "拼音基础", "简单词汇", "阅读理解"],
+              duration: "6周",
             }),
             media_urls: JSON.stringify([]),
-            tags: JSON.stringify(['启蒙', '阅读', '基础']),
+            tags: JSON.stringify(["启蒙", "阅读", "基础"]),
           },
-        ]);
-      });
+        ])
+      })
 
-      console.log('✅ 示例数据初始化完成');
+      console.log("✅ 示例数据初始化完成")
     } catch (error) {
-      console.error('❌ 示例数据初始化失败:', error);
-      throw error;
+      console.error("❌ 示例数据初始化失败:", error)
+      throw error
     }
   }
 
@@ -569,44 +575,44 @@ export class SQLiteDatabase {
   async clearAll(): Promise<void> {
     try {
       const tables = [
-        'stage_transitions',
-        'courses',
-        'homework_tasks',
-        'ai_conversations',
-        'milestones',
-        'growth_assessments',
-        'growth_records',
-        'children',
-        'users',
-      ];
+        "stage_transitions",
+        "courses",
+        "homework_tasks",
+        "ai_conversations",
+        "milestones",
+        "growth_assessments",
+        "growth_records",
+        "children",
+        "users",
+      ]
 
       await this.transaction(async () => {
         for (const table of tables) {
-          this.db.exec(`DELETE FROM ${table}`);
+          this.db.exec(`DELETE FROM ${table}`)
         }
-      });
+      })
 
-      console.log('✅ 所有数据已清除');
+      console.log("✅ 所有数据已清除")
     } catch (error) {
-      console.error('❌ 清除数据失败:', error);
-      throw error;
+      console.error("❌ 清除数据失败:", error)
+      throw error
     }
   }
 }
 
 // 创建并导出数据库实例
-let dbInstance: SQLiteDatabase | null = null;
+let dbInstance: SQLiteDatabase | null = null
 
 export function getDatabase(): SQLiteDatabase {
   if (!dbInstance) {
-    const dbPath = process.env.DATABASE_URL || './yyc3_database.db';
-    dbInstance = new SQLiteDatabase(dbPath);
+    const dbPath = process.env.DATABASE_URL || `${process.cwd()}/data/yyc3.db`
+    dbInstance = new SQLiteDatabase(dbPath)
   }
-  return dbInstance;
+  return dbInstance
 }
 
-// 兼容性导出，保持与现有代码的接口一致性
-export const db = getDatabase();
+// 注意：不再提供模块级饿汉式导出（构建期多 worker 并发求值会锁库），
+// 一律通过 getDatabase() 懒加载获取实例。
 
 // 类型导出
-export type { Child, LocalStorageGrowthRecord as GrowthRecord, Assessment, Milestone };
+export type { Child, GrowthRecord, Assessment, Milestone }
