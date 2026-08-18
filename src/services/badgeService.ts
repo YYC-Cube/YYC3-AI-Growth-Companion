@@ -11,7 +11,7 @@
  * - localStorage 读写增加环境守卫，服务端（API 路由）与浏览器均可安全使用
  */
 
-import { allBadges, badgeGroups, mockUserProgress } from '@/lib/data/badgeMockData';
+import { allBadges, badgeGroups, mockUserProgress } from '../../lib/data/badgeMockData';
 import {
   Badge,
   BadgeGroup,
