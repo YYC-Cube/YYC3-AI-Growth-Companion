@@ -78,3 +78,35 @@
 **终态基线**：测试 **493/0**（33 文件）；类型债 **778**（1214→778，-36%）；Next 16.3.1；SQLite 持久化；真实 AI（glm-5.1）；密钥零浏览器暴露；安全响应头生效；徽章 API 22 枚/6 已得；监控指标在线。
 
 **未尽事项**：Baby 的 jsdom 测试基建未采纳（避免动摇现有测试运行方式）；其 docs/library 130MB 与 xy-02-microservices 14MB 未并入（重复内容）；themes 三套主题尚未接线；剩余 778 类型债按域清偿。
+
+---
+
+# 第三轮执行：漏洞修复确认 + CI/CD 重建 + 全局闭环（2026-08-19）
+
+## 1. 依赖漏洞（16 个）
+
+核实结果：**全部已修复，0 开放告警**。16 个漏洞均为 `next` 自身（SSRF/中间件绕过等），随 next 16.3.1 对齐（提交 0ea51d5）+ dependabot PR #1/#2（backend 与 microservices 清单）一并解决。三个清单（根/microservices×2）经 GitHub API 确认 open=0。
+附加加固：package.json 增加 overrides（brace-expansion ^1.1.12、ajv@6→6.14.0）引导双解析树走向已修补版本；npm 合成树的开发工具链报告项（babel/minimatch 链）保留为 CI 报告不阻塞。
+
+## 2. CI/CD 重建
+
+删除 7 条互相重复的遗留流水线（其中 ci.yml 根本不是合法 YAML——JS 注释头+乱码名，从未跑通），重建单条 `ci.yml`：
+- **质量门禁（阻塞）**：bun test → 生产构建（空密钥，验证降级路径）
+- **报告项**：tsc（基线 778）、eslint（基线 6711）、npm audit（合成树）
+- **生产冒烟（独立 job）**：干净 runner 上 next start + 八项路由实测（首页/SQLite 种子/徽章/监控/AI 降级/安全头/静态资源/i18n）
+- 并发组取消过期运行
+**结果：CI 全绿（2m43s）**——https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/actions/runs/32160268634
+
+## 3. 全局闭环测试（本地生产模式，13 项全过）
+
+首页 200(0.13s)｜安全响应头全套含生产 CSP｜/en 200｜SQLite 种子+真实数据（小语+测试娃）｜成长记录 API｜徽章 stats(22/6/850)+搜索｜监控计数｜**真实 AI glm-5.1**（生产模式温暖回复）｜**TTS 代理真实合成 161KB wav**｜AI 计数 source=gateway｜静态图片 200｜404 正确｜**生产进程重启后数据完好**
+
+## 4. 闭环过程中发现并修复的深层问题
+
+1. `lib/config.ts` 的 dotenv 导入进入客户端 bundle → 构建失败（Next 自动加载 .env，已移除）
+2. `src/contexts/BirthdayContext.tsx` 引用未安装的 firebase（零消费者，已删）
+3. **.gitignore 地雷群（同族病灶第 3/4/5 例）**：未锚定的 `data/`、`metrics/`、`monitoring/`、`analytics/`、`performance/`、`i18n/` 规则静默吞掉 **14 个源文件**（含 i18n/request.ts、本期新写的监控端点、分析组件全套）——本地存在、CI 检出缺失，导致"本地全绿 CI 必挂"。全部锚定/删除后入库。
+4. bun 1.3.14（CI）对 src/ 内 `@/` 别名解析与本地 1.3.11 不同 → 改相对路径根治
+5. next 16 构建强制类型检查 → 恢复文档化的 ignoreDuringBuilds 临时开关（清偿 778 后移除），tsc/eslint 转为 CI 报告项
+
+**教训（家族级）**：任何"本地通过、CI 失败"的差异，先查 `git check-ignore -v <文件>`——本家族 .gitignore 模板已造成 lib/、*.png、archive/、data/、i18n/、metrics/、monitoring/、analytics/、performance/ 九类静默丢失。
