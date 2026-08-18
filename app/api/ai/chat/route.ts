@@ -151,7 +151,8 @@ async function generateModelResponse(
       system: getRoleSystemPrompt(role),
       prompt: message,
       temperature: 0.7,
-      maxOutputTokens: 1024,
+      // glm-5.1 等推理模型的思考过程消耗同一 token 池，上限给足避免正文为空
+      maxOutputTokens: 4096,
     });
     return text.trim() || null;
   } catch (error) {
