@@ -1,0 +1,175 @@
+.growth-tree-page {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #1f1f1f;
+}
+
+.header-description {
+  color: #8c8c8c;
+  margin: 0;
+}
+
+.stat-card {
+  height: 100%;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-filter-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+}
+
+.growth-tree-card {
+  border-radius: 8px;
+}
+
+.tree-container {
+  min-height: 400px;
+}
+
+.tree-phase-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-icon {
+  font-size: 18px;
+}
+
+.phase-name {
+  font-weight: 500;
+}
+
+.tree-record-node {
+  padding: 8px;
+  background-color: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tree-record-node:hover {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.record-title {
+  font-weight: 500;
+  color: #262626;
+}
+
+.record-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.timeline-item {
+  margin-bottom: 8px;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.age-tag {
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.record-description {
+  color: #595959;
+  margin-bottom: 4px;
+}
+
+.record-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.area-item {
+  margin-bottom: 16px;
+}
+
+.area-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.area-trend {
+  margin-top: 4px;
+  text-align: right;
+}
+
+.milestone-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.milestone-item:last-child {
+  border-bottom: none;
+}
+
+.milestone-icon {
+  font-size: 24px;
+}
+
+.milestone-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.milestone-age {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #1890ff;
+}

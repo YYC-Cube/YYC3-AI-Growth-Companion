@@ -54,6 +54,7 @@
   ],
   "exclude": [
     "node_modules",
+    "themes",
     "docs",
     "backend",
     "index.ts",
