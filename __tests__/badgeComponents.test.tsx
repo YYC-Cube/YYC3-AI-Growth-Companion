@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from 'bun:test';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import BadgeCard from '../../components/badge/BadgeCard';
-import BadgeDetailModal from '../../components/badge/BadgeDetailModal';
-import BadgeGroupCard from '../../components/badge/BadgeGroupCard';
-import { Badge, BadgeGroup } from '../../types/badge';
-import BadgeService from '../../services/badgeService';
+import BadgeCard from '../src/components/badge/BadgeCard';
+import BadgeDetailModal from '../src/components/badge/BadgeDetailModal';
+import BadgeGroupCard from '../src/components/badge/BadgeGroupCard';
+import { Badge, BadgeGroup } from '../src/types/badge';
+import BadgeService from '../src/services/badgeService';
 
 const mockBadge: Badge = {
   id: 'test_badge',

@@ -1,14 +1,24 @@
 /**
  * @file route.ts
- * @description 勋章系统API端点
+ * @description 勋章系统API端点（统一合并版：使用 src/services/badgeService 唯一服务实现）
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { badgeService } from '@/lib/services/badgeService';
+import BadgeService from '@/src/services/badgeService';
+import type { BadgeCategory, BadgeSeries } from '@/src/types/badge';
+
+const badgeService = BadgeService.getInstance();
 
 /**
  * GET /api/badges
  * 获取所有勋章或根据条件筛选
+ *
+ * 查询参数：
+ * - id：获取单个勋章
+ * - action=search&q=：搜索勋章
+ * - series / category：按套系/分类筛选
+ * - action=earned|hidden|stats|groups
+ * - action=progress&series=：套系进度
  */
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     // 获取单个勋章
     if (id) {
-      const badge = await badgeService.getBadgeById(id);
+      const badge = badgeService.getBadgeById(id);
       if (!badge) {
         return NextResponse.json(
           { success: false, error: 'Badge not found' },
@@ -33,54 +43,54 @@ export async function GET(request: NextRequest) {
 
     // 搜索勋章
     if (action === 'search' && query) {
-      const badges = await badgeService.searchBadges(query);
+      const badges = badgeService.searchBadges(query);
       return NextResponse.json({ success: true, data: badges });
     }
 
     // 按套系筛选
     if (series) {
-      const badges = await badgeService.getBadgesBySeries(series as any);
+      const badges = badgeService.getBadgesBySeries(series as BadgeSeries);
       return NextResponse.json({ success: true, data: badges });
     }
 
     // 按分类筛选
     if (category) {
-      const badges = await badgeService.getBadgesByCategory(category as any);
+      const badges = badgeService.getBadgesByCategory(category as BadgeCategory);
       return NextResponse.json({ success: true, data: badges });
     }
 
     // 获取已获得的勋章
     if (action === 'earned') {
-      const badges = await badgeService.getEarnedBadges();
+      const badges = badgeService.getEarnedBadges();
       return NextResponse.json({ success: true, data: badges });
     }
 
     // 获取隐藏勋章
     if (action === 'hidden') {
-      const badges = await badgeService.getHiddenBadges();
+      const badges = badgeService.getHiddenBadges();
       return NextResponse.json({ success: true, data: badges });
     }
 
     // 获取统计数据
     if (action === 'stats') {
-      const stats = await badgeService.getBadgeStats();
+      const stats = badgeService.getBadgeStats();
       return NextResponse.json({ success: true, data: stats });
     }
 
     // 获取套系组
     if (action === 'groups') {
-      const groups = await badgeService.getBadgeGroups();
+      const groups = badgeService.getBadgeGroups();
       return NextResponse.json({ success: true, data: groups });
     }
 
     // 获取套系进度
     if (action === 'progress' && series) {
-      const progress = await badgeService.getSeriesProgress(series as any);
+      const progress = badgeService.getSeriesProgress(series as BadgeSeries);
       return NextResponse.json({ success: true, data: progress });
     }
 
     // 默认：获取所有勋章
-    const badges = await badgeService.getAllBadges();
+    const badges = badgeService.getAllBadges();
     return NextResponse.json({ success: true, data: badges });
   } catch (error) {
     console.error('Badges API error:', error);

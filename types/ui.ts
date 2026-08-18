@@ -709,6 +709,7 @@ export interface BadgeMetadata {
   animatedIcon?: string;
   glowColor?: string;
   sparkleEffect?: boolean;
+  tags?: string[];
 }
 
 export interface SeriesProgress {

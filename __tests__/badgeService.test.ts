@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import BadgeService from '../src/services/badgeService';
-import { Badge, BadgeFilter, BadgeSeries, BadgeCategory, BadgeRarity } from '../../types/badge';
+import { Badge, BadgeFilter, BadgeSeries, BadgeCategory, BadgeRarity } from '../src/types/badge';
 
 describe('BadgeService', () => {
   let badgeService: BadgeService;
@@ -239,13 +239,13 @@ describe('BadgeService', () => {
 
     it('should update group progress after earning badges', async () => {
       const initialGroups = badgeService.getBadgeGroups();
-      const initialProgress = initialGroups.find(g => g.id === 'group_growth')?.progress || 0;
+      const initialProgress = initialGroups.find(g => g.id === 'growth')?.progress || 0;
 
       badgeService.updateBadgeProgress('growth_bronze', 100);
       await badgeService.unlockBadge('growth_bronze');
 
       const updatedGroups = badgeService.getBadgeGroups();
-      const updatedProgress = updatedGroups.find(g => g.id === 'group_growth')?.progress || 0;
+      const updatedProgress = updatedGroups.find(g => g.id === 'growth')?.progress || 0;
 
       expect(updatedProgress).toBeGreaterThan(initialProgress);
     });

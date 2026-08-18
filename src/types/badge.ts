@@ -1,148 +1,36 @@
-export interface Badge {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  series: BadgeSeries;
-  level: BadgeLevel;
-  category: BadgeCategory;
-  rarity: BadgeRarity;
-  unlockConditions: UnlockCondition[];
-  earnedDate?: string;
-  progress?: number;
-  isHidden?: boolean;
-  hiddenDescription?: string;
-  unlockAnimation?: string;
-  soundEffect?: string;
-  shareContent?: ShareContent;
-  metadata: BadgeMetadata;
-  nextBadge?: string;
-  prerequisiteBadge?: string;
-  seriesProgress?: SeriesProgress;
-}
+/**
+ * @file badge.ts
+ * @description 勋章域类型（统一合并版）
+ *
+ * 共享类型统一重导出自 types/ui（types/index.ts 的规范来源），
+ * 本文件仅保留勋章域扩展类型（BadgeFilter / BadgeUnlockEvent / BadgeUserProgress），
+ * 消除原先 src/types 与 types/ui 两份重复定义。
+ */
 
-export type BadgeSeries =
-  | 'growth'
-  | 'creative'
-  | 'hidden'
-  | 'dynasty'
-  | 'celebrities'
-  | 'technology'
-  | 'dream'
-  | 'culture'
-  | 'learning'
-  | 'social';
+import type {
+  BadgeSeries,
+  BadgeCategory,
+  BadgeRarity,
+  BadgeLevel,
+  UnlockCondition,
+} from '../../types/ui';
 
-export type BadgeLevel =
-  | 'bronze'
-  | 'silver'
-  | 'gold'
-  | 'platinum'
-  | 'diamond'
-  | 'legend';
-
-export type BadgeCategory =
-  | 'learning'
-  | 'culture'
-  | 'social'
-  | 'creative'
-  | 'physical'
-  | 'cognitive'
-  | 'emotional';
-
-export type BadgeRarity = 'common' | 'rare' | 'epic' | 'legendary' | 'mythical';
-
-export interface UnlockCondition {
-  type: ConditionType;
-  value: number;
-  description: string;
-  progress?: number;
-  current?: number;
-  target?: number;
-}
-
-export type ConditionType =
-  | 'total_hours'
-  | 'consecutive_days'
-  | 'completed_courses'
-  | 'cultural_sites_visited'
-  | 'interactions'
-  | 'creations'
-  | 'score'
-  | 'perfect_score'
-  | 'streak'
-  | 'custom';
-
-export interface ShareContent {
-  title: string;
-  description: string;
-  image: string;
-  hashtags: string[];
-}
-
-export interface BadgeMetadata {
-  points: number;
-  version: string;
-  createdAt: string;
-  updatedAt: string;
-  unlockCount?: number;
-  specialEffect?: boolean;
-  animatedIcon?: string;
-  glowColor?: string;
-  sparkleEffect?: boolean;
-  tags?: string[];
-}
-
-export interface SeriesProgress {
-  seriesId: string;
-  totalBadges: number;
-  earnedBadges: number;
-  currentLevel: BadgeLevel;
-  nextLevel?: BadgeLevel;
-  progressPercentage: number;
-  completionReward?: BadgeReward;
-  milestones: SeriesMilestone[];
-}
-
-export interface SeriesMilestone {
-  level: BadgeLevel;
-  requiredBadges: number;
-  reward: BadgeReward;
-  unlocked: boolean;
-}
-
-export interface BadgeReward {
-  type: 'points' | 'badge' | 'title' | 'avatar' | 'privilege';
-  value: any;
-  description: string;
-}
-
-export interface BadgeGroup {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  badgeCount: number;
-  earnedCount: number;
-  progress: number;
-  badges: string[];
-  completionBadge?: string;
-  category: BadgeCategory;
-  isLocked?: boolean;
-  unlockRequirement?: string;
-}
-
-export interface BadgeStats {
-  total: number;
-  earned: number;
-  bySeries: Record<BadgeSeries, number>;
-  byCategory: Record<BadgeCategory, number>;
-  byRarity: Record<BadgeRarity, number>;
-  byLevel: Record<BadgeLevel, number>;
-  totalPoints: number;
-  ranking?: number;
-  recentBadges: Badge[];
-}
+export type {
+  Badge,
+  BadgeSeries,
+  BadgeLevel,
+  BadgeCategory,
+  BadgeRarity,
+  UnlockCondition,
+  ConditionType,
+  ShareContent,
+  BadgeMetadata,
+  SeriesProgress,
+  SeriesMilestone,
+  BadgeReward,
+  BadgeGroup,
+  BadgeStats,
+} from '../../types/ui';
 
 export interface BadgeFilter {
   series?: BadgeSeries;
