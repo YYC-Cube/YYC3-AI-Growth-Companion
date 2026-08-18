@@ -619,3 +619,7 @@ backup/
 # YYC³ - YanYuCloudCube
 # "Words Initiate Quadrants, Language Serves as Core for the Future"
 # "All things converge in the cloud pivot; Deep stacks ignite a new era of intelligence"
+
+# ===== 静态资源例外（统一合并版修复）=====
+# 历史规则 *.png 把 public/ 下全部图片排除在版本控制外（远程仓库实际无图片资源）
+!public/**
