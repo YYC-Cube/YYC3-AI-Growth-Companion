@@ -180,11 +180,7 @@ export default function SmartHomeworkHelper({
   const speakFeedback = async (text: string) => {
     try {
       if (voiceServiceRef.current) {
-        await voiceServiceRef.current.textToSpeech(text, {
-          voice: 'zh-CN',
-          rate: 1.0,
-          pitch: 1.0,
-        });
+        await voiceServiceRef.current.textToSpeech(text);
       }
     } catch (error) {
       console.error('[SmartHomeworkHelper] 语音播放错误:', error);

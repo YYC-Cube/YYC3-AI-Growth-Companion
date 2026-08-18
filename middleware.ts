@@ -16,7 +16,7 @@ const handleI18nRouting = createMiddleware({
   localePrefix: 'as-needed',
 });
 
-export default function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/api/')) {

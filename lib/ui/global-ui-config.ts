@@ -114,7 +114,17 @@ export const defaultGlobalUIConfig: GlobalUIConfig = {
  */
 const getUIConfigFromGlobal = (): GlobalUIConfig => {
   try {
-    const uiConfig = config.getUIConfig();
+    // 主干 lib/config 暂无 getUIConfig（xy-01 侧扩展），做能力探测而非依赖异常兜底
+    const configWithUI = config as typeof config & {
+      getUIConfig?: () => {
+        theme: { primaryColor: string };
+        animation: { duration: string };
+      };
+    };
+    if (typeof configWithUI.getUIConfig !== 'function') {
+      return defaultGlobalUIConfig;
+    }
+    const uiConfig = configWithUI.getUIConfig();
 
     // 将统一配置转换为全局UI配置格式
     return {

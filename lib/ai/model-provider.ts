@@ -14,21 +14,26 @@
  */
 
 import { createOpenAI } from '@ai-sdk/openai';
+import type { LanguageModel } from 'ai';
 
-let cached: {
-  model: ReturnType<ReturnType<typeof createOpenAI>>;
+interface ResolvedProvider {
+  model: LanguageModel;
   name: string;
   source: 'openai' | 'gateway';
-} | null = null;
+}
 
-function resolveProvider() {
+let cached: ResolvedProvider | null = null;
+
+function resolveProvider(): ResolvedProvider | null {
   if (cached) return cached;
 
   const openaiKey = process.env['OPENAI_API_KEY'];
   if (openaiKey) {
     const openai = createOpenAI({
       apiKey: openaiKey,
-      baseURL: process.env['OPENAI_BASE_URL'] || undefined,
+      ...(process.env['OPENAI_BASE_URL']
+        ? { baseURL: process.env['OPENAI_BASE_URL'] }
+        : {}),
     });
     const modelName = process.env['OPENAI_MODEL'] || 'gpt-4o-mini';
     cached = { model: openai(modelName), name: modelName, source: 'openai' };
@@ -59,7 +64,7 @@ export function hasModelProvider(): boolean {
  * 获取真实模型实例。
  * @returns 未配置密钥时返回 null，调用方必须降级处理。
  */
-export function getModel() {
+export function getModel(): LanguageModel | null {
   const resolved = resolveProvider();
   return resolved ? resolved.model : null;
 }

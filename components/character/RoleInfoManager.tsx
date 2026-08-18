@@ -24,8 +24,8 @@ export default function RoleInfoManager({ child, onSave }: RoleInfoManagerProps)
       setFormData({
         id: child.id,
         name: child.name || "",
-        gender: child.gender || "female",
-        birthday: child.birthday
+        gender: (child.gender as "male" | "female") || "female",
+        ...(child.birthday ? { birthday: child.birthday } : {})
       })
     } else {
       const defaultCharacter = characterManager.getCharacterByGender("female")
@@ -76,9 +76,9 @@ export default function RoleInfoManager({ child, onSave }: RoleInfoManagerProps)
       id: formData.id || `child_${Date.now()}`,
       name: formData.name?.trim() || "",
       gender: formData.gender as "male" | "female",
-      birthday: formData.birthday,
-      avatarUrl: formData.avatarUrl,
-      preferences: formData.preferences
+      ...(formData.birthday ? { birthday: formData.birthday } : {}),
+      ...(formData.avatarUrl ? { avatarUrl: formData.avatarUrl } : {}),
+      ...(formData.preferences ? { preferences: formData.preferences } : {})
     }
 
     if (onSave) {
@@ -106,7 +106,7 @@ export default function RoleInfoManager({ child, onSave }: RoleInfoManagerProps)
       newCharacter.age = age
       newCharacter.birthday = {
         lunar: lunarBirthday,
-        solar: formData.birthday.toISOString().split('T')[0]
+        solar: formData.birthday.toISOString().split('T')[0] ?? ''
       }
       newCharacter.zodiac = zodiac
     }
@@ -128,7 +128,7 @@ export default function RoleInfoManager({ child, onSave }: RoleInfoManagerProps)
         age: age,
         birthday: {
           lunar: lunarBirthday,
-          solar: birthday.toISOString().split('T')[0]
+          solar: birthday.toISOString().split('T')[0] ?? ''
         },
         zodiac: zodiac
       }

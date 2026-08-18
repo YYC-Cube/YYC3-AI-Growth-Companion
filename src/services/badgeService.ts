@@ -11,8 +11,10 @@
  * - localStorage 读写增加环境守卫，服务端（API 路由）与浏览器均可安全使用
  */
 
+import { allBadges, badgeGroups, mockUserProgress } from '@/lib/data/badgeMockData';
 import {
   Badge,
+  BadgeGroup,
   BadgeFilter,
   BadgeStats,
   BadgeUserProgress,
@@ -22,7 +24,6 @@ import {
   BadgeRarity,
   BadgeLevel,
 } from '../types/badge';
-import { allBadges, badgeGroups, mockUserProgress } from '@/lib/data/badgeMockData';
 
 const STORAGE_KEY = 'badgeUserProgress';
 
@@ -241,7 +242,7 @@ export class BadgeService {
     return this.unlockHistory;
   }
 
-  public getBadgeGroups() {
+  public getBadgeGroups(): Array<BadgeGroup & { earnedCount: number; progress: number }> {
     return badgeGroups.map(group => ({
       ...group,
       earnedCount: group.badges.filter(id => this.isBadgeEarned(id)).length,
@@ -271,7 +272,7 @@ export class BadgeService {
             options.fuzzy ? this.fuzzyMatch(tag, searchLower) : tag.includes(searchLower)
           );
         }
-        const fieldValue = badgeData[field] as string;
+        const fieldValue: string = badgeData[field];
         return options.fuzzy
           ? this.fuzzyMatch(fieldValue, searchLower)
           : fieldValue.includes(searchLower);
@@ -325,7 +326,14 @@ export class BadgeService {
   }
 
   /** 套系进度（API action=progress 使用） */
-  public getSeriesProgress(series: BadgeSeries) {
+  public getSeriesProgress(series: BadgeSeries): {
+    series: BadgeSeries;
+    totalBadges: number;
+    earnedBadges: number;
+    progressPercentage: number;
+    badgeIds: string[];
+    earnedBadgeIds: string[];
+  } {
     const badges = this.getBadgesBySeries(series);
     const earned = badges.filter(b => this.isBadgeEarned(b.id));
     return {

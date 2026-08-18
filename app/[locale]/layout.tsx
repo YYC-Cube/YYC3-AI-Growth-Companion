@@ -6,11 +6,11 @@
  * 的 next-intl 中间件处理。根路由（无 [locale] 段）保持中文直出。
  */
 
-import type React from 'react';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { Inter } from 'next/font/google';
+import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import type React from 'react';
 import { locales } from '@/i18n';
 import '../globals.css';
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: '0-22岁全周期AI智能成长守护平台',
 };
 
-export function generateStaticParams() {
+export function generateStaticParams(): Array<{ locale: string }> {
   return locales.map(locale => ({ locale }));
 }
 
@@ -34,7 +34,7 @@ export default async function LocaleLayout({
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
-}) {
+}): Promise<React.JSX.Element> {
   const { locale } = await params;
   if (!hasLocale(locales, locale)) {
     notFound();

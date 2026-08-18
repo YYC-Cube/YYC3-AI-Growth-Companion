@@ -3,6 +3,7 @@ import ts from 'typescript-eslint';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import importPlugin from 'eslint-plugin-import';
+import globals from 'globals';
 import customRules from './.eslintrc.custom-rules.js';
 
 /**
@@ -33,14 +34,22 @@ export default [
   // 全局规则配置
   {
     files: ['**/*.{ts,tsx}'],
+    settings: {
+      // 识别 tsconfig 路径别名（@/* 等），否则 import/no-unresolved 全量误报
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+        },
+      },
+    },
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      // flat config 的 globals 必须展开真实的全局名集合（legacy 布尔写法无效）
       globals: {
-        browser: true,
-        node: true,
-        es2022: true,
-        jest: true,
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
       },
       parser: ts.parser,
       parserOptions: {
@@ -50,7 +59,7 @@ export default [
     },
 
     plugins: {
-      '@typescript-eslint': ts,
+      '@typescript-eslint': ts.plugin,
       react,
       'react-hooks': reactHooks,
       import: importPlugin,
@@ -74,7 +83,6 @@ export default [
       '@typescript-eslint/restrict-template-expressions': 'error',
       '@typescript-eslint/restrict-plus-operands': 'error',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-      '@typescript-eslint/no-unchecked-optional-chain': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'error',
 

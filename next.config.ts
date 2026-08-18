@@ -9,13 +9,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  // 配置 Turbopack 根目录，消除 workspace root warning
-  experimental: {
-    turbo: {
-      root: __dirname,
-    },
-  },
-
   // 图片：沿用 .mjs 的 unoptimized 策略（避免远程图片优化器依赖）
   images: {
     unoptimized: true,

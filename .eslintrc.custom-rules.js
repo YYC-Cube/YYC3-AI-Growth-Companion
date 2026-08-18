@@ -8,31 +8,34 @@ export default {
           category: 'Best Practices',
           recommended: true,
         },
-        schema: {
-          type: 'object',
-          properties: {
-            allowedColors: {
-              type: 'array',
-              items: { type: 'string' },
+        schema: [
+          {
+            type: 'object',
+            properties: {
+              allowedColors: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+              // 允许字符串或正则字面量（规则内部统一按 test 使用）
+              allowedPatterns: {
+                type: 'array',
+              },
+              checkProperties: {
+                type: 'boolean',
+                default: true,
+              },
+              checkStrings: {
+                type: 'boolean',
+                default: true,
+              },
+              checkTemplateLiterals: {
+                type: 'boolean',
+                default: true,
+              },
             },
-            allowedPatterns: {
-              type: 'array',
-              items: { type: 'string' },
-            },
-            checkProperties: {
-              type: 'boolean',
-              default: true,
-            },
-            checkStrings: {
-              type: 'boolean',
-              default: true,
-            },
-            checkTemplateLiterals: {
-              type: 'boolean',
-              default: true,
-            },
+            additionalProperties: false,
           },
-        },
+        ],
       },
       create(context) {
         const options = context.options[0] || {};

@@ -54,13 +54,13 @@ describe('BadgeService', () => {
       expect(badges.every(b => b.rarity === 'common')).toBe(true);
     });
 
-    it('should filter badges by status', () => {
+    it('should filter badges by status', async () => {
       const filter: BadgeFilter = { status: 'earned' };
       const badges = badgeService.getBadgesByFilter(filter);
       expect(badges.length).toBe(0);
 
       badgeService.updateBadgeProgress('growth_bronze', 100);
-      badgeService.unlockBadge('growth_bronze');
+      await badgeService.unlockBadge('growth_bronze');
 
       const earnedBadges = badgeService.getBadgesByFilter(filter);
       expect(earnedBadges.length).toBeGreaterThan(0);
@@ -178,7 +178,7 @@ describe('BadgeService', () => {
 
       const history = badgeService.getUnlockHistory();
       expect(history.length).toBeGreaterThan(0);
-      expect(history[0].badgeId).toBe('growth_bronze');
+      expect(history[0]?.badgeId).toBe('growth_bronze');
     });
   });
 
@@ -211,7 +211,7 @@ describe('BadgeService', () => {
 
       const earnedBadges = badgeService.getEarnedBadges();
       expect(earnedBadges.length).toBeGreaterThan(0);
-      expect(earnedBadges[0].id).toBe('growth_bronze');
+      expect(earnedBadges[0]?.id).toBe('growth_bronze');
     });
   });
 

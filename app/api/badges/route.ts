@@ -4,8 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import BadgeService from '@/src/services/badgeService';
+import logger from '@/lib/logger';
 import { badgesRequestsTotal, badgesUnlockedTotal } from '@/lib/monitoring/metrics';
+import BadgeService from '@/src/services/badgeService';
 import type { BadgeCategory, BadgeSeries } from '@/src/types/badge';
 
 const badgeService = BadgeService.getInstance();
@@ -21,7 +22,7 @@ const badgeService = BadgeService.getInstance();
  * - action=earned|hidden|stats|groups
  * - action=progress&series=：套系进度
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest) {
     const badges = badgeService.getAllBadges();
     return NextResponse.json({ success: true, data: badges });
   } catch (error) {
-    console.error('Badges API error:', error);
+    logger.error('Badges API error:', 'api/badges', error);
     return NextResponse.json(
       {
         success: false,
@@ -111,9 +112,9 @@ export async function GET(request: NextRequest) {
  * POST /api/badges
  * 解锁勋章
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { action?: string; id?: string };
     const { action, id } = body;
 
     if (action === 'unlock' && id) {
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    console.error('Badges POST API error:', error);
+    logger.error('Badges POST API error:', 'api/badges', error);
     return NextResponse.json(
       {
         success: false,
