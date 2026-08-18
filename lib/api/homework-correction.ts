@@ -353,7 +353,7 @@ let homeworkCorrectionService: HomeworkCorrectionService | null = null;
 
 export function getHomeworkCorrectionService(): HomeworkCorrectionService {
   if (!homeworkCorrectionService) {
-    const apiKey = process.env.NEXT_PUBLIC_BIGMODEL_API_KEY || '';
+    const apiKey = process.env.BIGMODEL_API_KEY || '';
     if (!apiKey) {
       console.warn('未配置BigModel API密钥，将使用模拟数据');
     }

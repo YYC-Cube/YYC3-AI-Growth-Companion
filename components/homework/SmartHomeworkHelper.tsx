@@ -3,8 +3,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
-import { getHomeworkCorrectionService } from '@/lib/api/homework-correction';
-import { getVoiceService } from '@/lib/api/voice-services';
 import type { HomeworkResult, VoiceRecording } from '@/types';
 
 interface SmartHomeworkHelperProps {
@@ -35,11 +33,6 @@ export default function SmartHomeworkHelper({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const voiceServiceRef = useRef<ReturnType<typeof getVoiceService> | null>(null);
-
-  if (!voiceServiceRef.current) {
-    voiceServiceRef.current = getVoiceService();
-  }
 
   // Handle image upload for homework correction
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -66,17 +59,38 @@ export default function SmartHomeworkHelper({
   const analyzeHomeworkImage = async (file: File) => {
     setIsProcessing(true);
     try {
-      const service = getHomeworkCorrectionService();
+      // 图片转 base64 后交由服务端代理调用 BigModel，密钥不出服务端
+      const image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
 
-      // Upload image and get URL
-      const imageUrl = await service.uploadImage(file);
+      const response = await fetch('/api/ai/homework-correction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image }),
+      });
+      if (!response.ok) {
+        throw new Error(`作业批改接口错误: ${response.status}`);
+      }
 
-      // Perform full correction flow
-      const correctionResult = await service.fullCorrectionFlow(imageUrl);
+      const correctionResult = (await response.json()) as {
+        results: Array<{
+          uuid: string;
+          question: string;
+          correct_answer: string;
+          user_answer: string;
+          is_correct: boolean;
+          explanation: string;
+          score?: number;
+        }>;
+      };
 
       // Convert API results to our component format
       const formattedResults: HomeworkResult[] = correctionResult.results.map(
-        (result, index) => {
+        result => {
           const formatted: HomeworkResult = {
             id: result.uuid,
             question: result.question,
@@ -161,14 +175,24 @@ export default function SmartHomeworkHelper({
     }
   };
 
-  // Real speech-to-text API integration
+  // Real speech-to-text API integration（经服务端代理，密钥不出服务端）
   const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
     try {
-      const voiceService = getVoiceService();
-      const audioFile = new File([audioBlob], 'recording.webm', {
-        type: 'audio/webm',
+      const formData = new FormData();
+      formData.append(
+        'audio',
+        new File([audioBlob], 'recording.webm', { type: 'audio/webm' })
+      );
+
+      const response = await fetch('/api/ai/speech-to-text', {
+        method: 'POST',
+        body: formData,
       });
-      return await voiceService.speechToText(audioFile);
+      if (!response.ok) {
+        throw new Error(`语音转写接口错误: ${response.status}`);
+      }
+      const { text } = (await response.json()) as { text: string };
+      return text;
     } catch (error) {
       console.error('语音转文字失败:', error);
       // Fallback to mock text
@@ -176,12 +200,23 @@ export default function SmartHomeworkHelper({
     }
   };
 
-  // Real text-to-speech for AI feedback（恢复自 yyc3-xy-022 在途工作）
+  // Real text-to-speech for AI feedback（恢复自 yyc3-xy-022 在途工作，
+  // 经服务端代理播放，浏览器不持有 BigModel 密钥）
   const speakFeedback = async (text: string) => {
     try {
-      if (voiceServiceRef.current) {
-        await voiceServiceRef.current.textToSpeech(text);
+      const response = await fetch('/api/ai/text-to-speech', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (!response.ok) {
+        throw new Error(`语音合成接口错误: ${response.status}`);
       }
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.onended = () => URL.revokeObjectURL(audioUrl);
+      await audio.play();
     } catch (error) {
       console.error('[SmartHomeworkHelper] 语音播放错误:', error);
     }

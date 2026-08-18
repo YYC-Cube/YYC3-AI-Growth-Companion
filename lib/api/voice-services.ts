@@ -195,7 +195,7 @@ export class VoiceService {
       recognition.interimResults = false;
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[0][0].transcript;
+        const transcript = event.results[0]?.[0]?.transcript ?? '';
         resolve(transcript);
       };
 
@@ -398,7 +398,7 @@ let voiceService: VoiceService | null = null;
 
 export function getVoiceService(): VoiceService {
   if (!voiceService) {
-    const apiKey = process.env.NEXT_PUBLIC_BIGMODEL_API_KEY || '';
+    const apiKey = process.env.BIGMODEL_API_KEY || '';
     voiceService = new VoiceService(apiKey);
   }
   return voiceService;
