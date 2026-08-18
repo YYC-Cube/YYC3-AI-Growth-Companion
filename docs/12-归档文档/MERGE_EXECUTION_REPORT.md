@@ -57,3 +57,24 @@
 | yyc3-xy-01 | 本地已抢救（3 个 rescue 提交），未推送其远程 |
 | yyc3-xy-022 | 本地已抢救（1 个 rescue 提交），未推送其远程 |
 | yyc3-xy-02 / 03、xy | 资产已吸收/验证，可只读归档 |
+
+---
+
+# 第二轮执行：YYC3-Baby 吸收合并（2026-08-18 深夜）
+
+依据 `YYC3-BABY_MERGEABILITY_ANALYSIS.md`，按 P0→P1→P2 全链路完成：
+
+| 阶段 | 内容 | 提交 |
+|---|---|---|
+| P0-1 安全 | BigModel 密钥服务端化：新增 /api/ai/homework-correction、speech-to-text、text-to-speech（TTS 为我方补充，含音色白名单+2000 字上限）三代理路由；SmartHomeworkHelper 三处调用改走代理；工厂读 BIGMODEL_API_KEY；全库零 NEXT_PUBLIC_ 密钥 | 4a99afc |
+| P0-2 安全 | Baby 的 .secrets-backup/ 加入 gitignore 并本地提交 | (Baby 仓) |
+| P1 数据 | SQLite 真实持久化：lib/db/{server,sqlite-client}（node:sqlite+WAL+FK+JSON 列+种子，8 张表含 badges）；children/growth-records/homework(+[id]) 四路由换真 CRUD；实测重启后数据完好 | 6ced362 |
+| P1 依赖 | next 16.3.1 + jsdom 对齐 Baby 基线，49 包重装，全绿 | 0ea51d5 |
+| P1 质量 | 安全响应头（nosniff/XFO/RP/PP + 生产 CSP）；死簇删除（services/knowledge、lib/decision、5 个零引用模块）；热点文件采用 Baby 干净版 | b317e59 |
+| P2 资产 | themes 三套 Figma 主题（tsc 排除）；docs/13-Baby并入文档（架构 63/规划 19/历史快照 440 等 7.1MB）；Baby config 测试 25 用例 | b6277c3 / 254a5c8 |
+| P2 归档 | Baby 仓库推私有远程 github.com/YYC-Cube/YYC3-Baby（8 提交历史保全） | — |
+| 修复 | Next 16 拒绝空 headers 数组——CSP 改为仅生产注册 | 7c2dd52 |
+
+**终态基线**：测试 **493/0**（33 文件）；类型债 **778**（1214→778，-36%）；Next 16.3.1；SQLite 持久化；真实 AI（glm-5.1）；密钥零浏览器暴露；安全响应头生效；徽章 API 22 枚/6 已得；监控指标在线。
+
+**未尽事项**：Baby 的 jsdom 测试基建未采纳（避免动摇现有测试运行方式）；其 docs/library 130MB 与 xy-02-microservices 14MB 未并入（重复内容）；themes 三套主题尚未接线；剩余 778 类型债按域清偿。
