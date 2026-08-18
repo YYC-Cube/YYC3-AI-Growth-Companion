@@ -14,8 +14,8 @@
  *
  * brief 翻译审计系统
  */
-import { t } from "./engine";
-import { logger } from "./infra/logger";
+import { t } from "./engine.js";
+import { logger } from "./infra/logger.js";
 
 interface I18nAuditEntry {
   key: string;

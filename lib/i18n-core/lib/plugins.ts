@@ -14,8 +14,8 @@
  *
  * brief @yyc3/i18n-core lib/plugins.ts 模块
  */
-import { logger } from './infra/logger';
-import type { Locale } from './types';
+import { logger } from './infra/logger.js';
+import type { Locale } from './types.js';
 
 export type I18nContext = {
   locale: Locale;

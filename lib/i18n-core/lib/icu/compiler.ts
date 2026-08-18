@@ -14,7 +14,7 @@
  *
  * brief ICU MessageFormat 编译器
  */
-import type { ICUNode, ICUPlural, ICUSelect, ICUSelectOrdinal } from "./types";
+import type { ICUNode, ICUPlural, ICUSelect, ICUSelectOrdinal } from "./types.js";
 
 export interface ICUCompileContext {
   locale: string;

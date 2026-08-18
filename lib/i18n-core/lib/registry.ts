@@ -14,7 +14,7 @@
  *
  * brief @yyc3/i18n-core lib/registry.ts 模块
  */
-import type { Locale, TranslationMap } from "./types";
+import type { Locale, TranslationMap } from "./types.js";
 
 type LazyLocale = Exclude<Locale, "en">;
 type LocaleModule = Record<string, TranslationMap>;

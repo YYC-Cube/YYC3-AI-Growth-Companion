@@ -14,9 +14,9 @@
  *
  * brief MCP i18n 工具集
  */
-import type { I18nEngine } from "../engine";
-import type { MCPServer } from "./server";
-import type { MCPTool, MCPToolResult } from "./types";
+import type { I18nEngine } from "../engine.js";
+import type { MCPServer } from "./server.js";
+import type { MCPTool, MCPToolResult } from "./types.js";
 
 function flattenTranslations(obj: Record<string, unknown>, prefix = ""): Record<string, string> {
   const result: Record<string, string> = {};

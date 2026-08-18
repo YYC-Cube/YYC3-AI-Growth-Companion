@@ -15,8 +15,8 @@
  * brief MCP 标准传输层
  */
 import { Readable, Writable } from "node:stream";
-import type { MCPMessage, MCPTransport } from "./types";
-import { logger } from "../infra/logger";
+import type { MCPMessage, MCPTransport } from "./types.js";
+import { logger } from "../infra/logger.js";
 
 export class StdioTransport implements MCPTransport {
   private _connected = false;

@@ -14,14 +14,14 @@
  *
  * brief Ollama 认证提供者
  */
-import { logger } from "../infra/logger";
+import { logger } from "../infra/logger.js";
 import type {
   AIProvider,
   AIProviderConfig,
   AIProviderInfo,
   TranslationRequest,
   TranslationResponse,
-} from "./provider";
+} from "./provider.js";
 
 export class OllamaProvider implements AIProvider {
   readonly type = "ollama" as const;

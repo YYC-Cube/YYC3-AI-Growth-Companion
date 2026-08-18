@@ -14,7 +14,7 @@
  *
  * brief RTL 语言工具
  */
-import type { HorizontalAlignment, RTLLocale, SpacingProperty, TextDirection } from './types';
+import type { HorizontalAlignment, RTLLocale, SpacingProperty, TextDirection } from './types.js';
 
 export const RTL_LOCALES: RTLLocale[] = ['ar'];
 

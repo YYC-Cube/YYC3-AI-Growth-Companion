@@ -14,21 +14,21 @@
  *
  * brief i18n 核心引擎实现
  */
-import { en } from "../locales/en";
-import { LRUCache } from "./cache";
-import { ICUCompiler } from "./icu/compiler";
-import { ICUParser } from "./icu/parser";
-import { logger } from "./infra/logger";
-import { getSafeLocalStorage } from "./local-storage";
-import { PluginManager } from "./plugins";
+import { en } from "../locales/en.js";
+import { LRUCache } from "./cache.js";
+import { ICUCompiler } from "./icu/compiler.js";
+import { ICUParser } from "./icu/parser.js";
+import { logger } from "./infra/logger.js";
+import { getSafeLocalStorage } from "./local-storage.js";
+import { PluginManager } from "./plugins.js";
 import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
   isSupportedLocale,
   loadLazyLocaleTranslation,
   resolveNavigatorLocale,
-} from "./registry";
-import type { Locale, TranslationMap } from "./types";
+} from "./registry.js";
+import type { Locale, TranslationMap } from "./types.js";
 
 type Subscriber = (locale: Locale) => void;
 

@@ -14,7 +14,7 @@
  *
  * brief AI 翻译提供者管理
  */
-import { logger } from "../infra/logger";
+import { logger } from "../infra/logger.js";
 
 export type AIProviderType = "openai" | "ollama" | "anthropic" | "azure" | "custom";
 

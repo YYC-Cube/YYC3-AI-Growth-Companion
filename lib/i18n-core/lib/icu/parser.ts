@@ -26,7 +26,7 @@ import type {
   ICUSelectClause,
   ICUSelectOrdinal,
   ICUTime
-} from "./types";
+} from "./types.js";
 
 export class ICUParser {
   private pos = 0;

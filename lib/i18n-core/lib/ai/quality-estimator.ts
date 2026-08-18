@@ -14,7 +14,7 @@
  *
  * brief AI 翻译质量评估
  */
-import { logger } from "../infra/logger";
+import { logger } from "../infra/logger.js";
 
 export type QESeverity = "critical" | "warning" | "info";
 

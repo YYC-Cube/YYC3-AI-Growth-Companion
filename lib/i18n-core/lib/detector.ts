@@ -14,7 +14,7 @@
  *
  * brief 语言自动检测
  */
-import type { Locale } from "./types";
+import type { Locale } from "./types.js";
 
 const LOCALE_ALIASES: Record<string, Locale> = {
   zh: "zh-CN",

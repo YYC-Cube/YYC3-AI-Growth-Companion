@@ -14,7 +14,7 @@
  *
  * brief MCP 服务端实现
  */
-import { logger } from "../infra/logger";
+import { logger } from "../infra/logger.js";
 import type {
   MCPMessage,
   MCPResource,
@@ -24,7 +24,7 @@ import type {
   MCPTool,
   MCPToolResult,
   MCPTransport,
-} from "./types";
+} from "./types.js";
 
 export type ToolHandler = (args: Record<string, unknown>) => Promise<MCPToolResult>;
 
