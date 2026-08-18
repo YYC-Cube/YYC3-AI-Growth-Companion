@@ -482,6 +482,13 @@ export type {
   HomeworkStats,
 } from './homework';
 
+// ===== 用户类型（源自 yyc3-xy-01，供 profile 页面使用） =====
+export type {
+  UserPreferences,
+  UserProfile,
+  AgeGroup,
+} from './user';
+
 // ===== 全局工具类型 =====
 export interface MockChild {
   id: string;
