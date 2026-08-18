@@ -69,4 +69,4 @@ The static landing page is auto-deployed to GitHub Pages at
 
 ## License
 
-MIT © 2026 YYC-Cube
+MIT © 2026 YanYuCloudCube™

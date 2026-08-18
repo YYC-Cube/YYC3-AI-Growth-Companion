@@ -1,5 +1,7 @@
 # 安全策略（Security Policy）
 
+> **YanYuCloudCube ™**
+
 > 适用版本：统一基线 v3.x 及以上
 
 ## 🔒 安全架构摘要

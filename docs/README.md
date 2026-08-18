@@ -1,6 +1,6 @@
 # 项目文档索引
 
-> YYC³ AI小语 · 智能成长守护系统（统一基线 v3.2.x）· 更新：2026-08-19
+> **YanYuCloudCube ™** · YYC³ AI小语 · 智能成长守护系统（统一基线 v3.2.x）· 更新：2026-08-19
 
 ## 📚 活跃文档（日常使用，随代码更新）
 
@@ -11,6 +11,7 @@
 | [API 参考](api-reference.md) | 15 个路由的请求/响应/示例 |
 | [部署指南](deployment.md) | Pages(xy.yyc3.vip) + 主应用 SSR 部署 + 运维手册 |
 | [测试指南](testing.md) | 编写规范、覆盖地图、CI 集成 |
+| [徽章系统设计](badge-system.md) | 勋章域权威设计：数据模型/服务/API/路线图 |
 | [根目录 README](../README.md) | 项目门面：能力总览 + 可视化架构 |
 | [CONTRIBUTING](../CONTRIBUTING.md) · [SECURITY](../SECURITY.md) · [CHANGELOG](../CHANGELOG.md) | 社区标准文件 |
 

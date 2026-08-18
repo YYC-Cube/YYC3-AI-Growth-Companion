@@ -3,6 +3,12 @@
 本项目所有显著变更记录于此。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [3.2.1] - 2026-08-19
+
+### 新增
+- **徽章系统设计文档**（docs/badge-system.md）：22 枚/10 套系实况数据模型、服务 22 方法 API 面、解锁时序、扩展指南与路线图（图标产出/事件接线/SQLite 持久化）
+- **品牌更新**：全站出品方标识统一为 YanYuCloudCube ™（LICENSE 版权人、README 双语、着陆页、文档套件）
+
 ## [3.2.0] - 2026-08-19
 
 ### 新增

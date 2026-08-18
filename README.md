@@ -291,10 +291,11 @@ formatRelativeTime(-3600, 'zh-CN');              // 相对时间
 | 工程 | [架构设计](docs/architecture.md) · [API 参考](docs/api-reference.md) · [测试指南](docs/testing.md) |
 | 交付 | [部署指南](docs/deployment.md)（含 Pages · xy.yyc3.vip） |
 | 社区 | [贡献指南](CONTRIBUTING.md) · [安全策略](SECURITY.md) · [变更日志](CHANGELOG.md) · [MIT 许可](LICENSE) |
+| 领域设计 | [徽章系统设计](docs/badge-system.md) |
 | 历史 | [文档索引 → 历史档案](docs/README.md#-历史档案只读不再更新)（三轮合并执行报告等） |
 
 <div align="center">
 
-**YYC³ · AI Growth Companion** · 统一基线 v3.x · MIT License
+**YanYuCloudCube ™** · YYC³ AI小语 · 智能成长守护系统 · 统一基线 v3.x · MIT License
 
 </div>
