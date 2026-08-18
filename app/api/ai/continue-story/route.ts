@@ -1,15 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
+import { getModel } from '@/lib/ai/model-provider';
 
-const openai = createOpenAI({
-  apiKey: process.env['OPENAI_API_KEY'] ?? '',
-  ...(process.env['OPENAI_BASE_URL'] && {
-    baseURL: process.env['OPENAI_BASE_URL'],
-  }),
-});
-
-const model = openai('gpt-4o-mini') as any;
+const model = getModel() as any; // 统一 provider（lib/ai/model-provider），未配置密钥时为 null，由各路由的降级路径兜底
 
 // 故事风格模板
 const STYLE_TEMPLATES: Record<string, string> = {

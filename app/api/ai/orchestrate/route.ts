@@ -1,19 +1,12 @@
 import { generateText } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
+import { getModel } from '@/lib/ai/model-provider';
 import {
   AI_ROLES,
   analyzeQueryComplexity,
   getCoordinatedPrompt,
 } from '@/lib/ai_roles';
 
-const openai = createOpenAI({
-  apiKey: process.env['OPENAI_API_KEY'] ?? '',
-  ...(process.env['OPENAI_BASE_URL'] && {
-    baseURL: process.env['OPENAI_BASE_URL'],
-  }),
-});
-
-const model = openai('gpt-4o-mini');
+const model = getModel() as any; // 统一 provider（lib/ai/model-provider），未配置密钥时为 null，由各路由的降级路径兜底
 
 export async function POST(request: Request) {
   try {
@@ -38,7 +31,7 @@ export async function POST(request: Request) {
       const roleConfig = AI_ROLES[role];
 
       const { text } = await generateText({
-        model: model,
+        model: model as any,
         system: getCoordinatedPrompt(message, [role]),
         prompt: message,
       });

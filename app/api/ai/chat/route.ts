@@ -1,18 +1,19 @@
 /**
- * @fileoverview YYC³ AI小语智能成长守护系统 - AI聊天API
- * @description 处理AI聊天请求，支持流式响应和多种角色交互模式
+ * @fileoverview YYC³ AI小语智能成长守护系统 - AI聊天API（真实 AI 接入版）
+ * @description 优先调用真实 LLM（经 lib/ai/model-provider 统一配置），
+ *              未配置密钥或调用失败时降级到本地关键词回复（CLEAN_RESPONSES）。
+ *              SSE 流式格式与客户端 hooks/useAIXiaoyu 的解析逻辑保持兼容：
+ *              data: {"content":..., "role":..., "complexity":...} + data: [DONE]
  * @author YYC³
- * @version 1.0.0
- * @created 2025-01-30
- * @modified 2025-01-30
- * @copyright Copyright (c) 2025 YYC³
- * @license MIT
+ * @version 2.0.0
  */
 
-import { selectRoleByContext, type AIRole } from '@/lib/ai_roles';
+import { generateText } from 'ai';
+import { selectRoleByContext, getRoleSystemPrompt, type AIRole } from '@/lib/ai_roles';
+import { getModel, hasModelProvider } from '@/lib/ai/model-provider';
 import logger from '@/lib/logger';
 
-// 预设的干净回复集合 - 彻底避免重复
+// 预设的干净回复集合 - 无密钥/调用失败时的降级路径
 const CLEAN_RESPONSES = {
   greetings: [
     '您好！我是小语AI助手，很高兴为您提供育儿帮助。今天想聊什么呢？',
@@ -59,11 +60,10 @@ const CLEAN_RESPONSES = {
   ],
 };
 
-// 简单干净的回复函数 - 彻底避免重复
+// 简单干净的降级回复函数
 function generateLocalResponse(message: string, role?: string): string {
   const cleanMessage = message.trim().toLowerCase();
 
-  // 根据关键词选择合适的回复类别
   if (
     cleanMessage.includes('你好') ||
     cleanMessage.includes('嗨') ||
@@ -71,8 +71,7 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('在吗')
   ) {
     const responses = CLEAN_RESPONSES.greetings;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
   if (
@@ -82,8 +81,7 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('听歌')
   ) {
     const responses = CLEAN_RESPONSES.music;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
   if (
@@ -93,8 +91,7 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('学')
   ) {
     const responses = CLEAN_RESPONSES.learning;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
   if (
@@ -103,8 +100,7 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('防护')
   ) {
     const responses = CLEAN_RESPONSES.safety;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
   if (
@@ -114,8 +110,7 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('晚上')
   ) {
     const responses = CLEAN_RESPONSES.sleep;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
   if (
@@ -125,57 +120,92 @@ function generateLocalResponse(message: string, role?: string): string {
     cleanMessage.includes('喂养')
   ) {
     const responses = CLEAN_RESPONSES.eating;
-    const randomIndex = Math.floor(Math.random() * responses.length);
-    return responses[randomIndex]!;
+    return responses[Math.floor(Math.random() * responses.length)]!;
   }
 
-  // 角色特定回复
   if (role && role in CLEAN_RESPONSES.role) {
     const roleResponse =
       CLEAN_RESPONSES.role[role as keyof typeof CLEAN_RESPONSES.role];
     return roleResponse!;
   }
 
-  // 默认回复
   const defaultResponses = CLEAN_RESPONSES.default;
-  const randomIndex = Math.floor(Math.random() * defaultResponses.length);
-  return defaultResponses[randomIndex]!;
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)]!;
+}
+
+/**
+ * 真实模型调用：基于角色 systemPrompt 生成回复。
+ * 返回 null 表示不可用（未配置密钥或调用失败），调用方降级。
+ */
+async function generateModelResponse(
+  message: string,
+  role: AIRole
+): Promise<string | null> {
+  const model = getModel();
+  if (!model) return null;
+
+  try {
+    const { text } = await generateText({
+      model,
+      system: getRoleSystemPrompt(role),
+      prompt: message,
+      temperature: 0.7,
+      maxOutputTokens: 1024,
+    });
+    return text.trim() || null;
+  } catch (error) {
+    logger.warn(
+      '[ai/chat] 真实模型调用失败，降级到本地回复:',
+      undefined,
+      error
+    );
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
   try {
     const { message, role, complexity } = await request.json();
 
+    if (!message || typeof message !== 'string') {
+      return new Response(JSON.stringify({ error: '消息不能为空' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const selectedRole: AIRole = role || selectRoleByContext(message);
 
-    // 生成干净的回复
-    const responseContent = generateLocalResponse(message, selectedRole);
+    // 真实模型优先，失败降级到本地关键词回复
+    const responseContent =
+      (hasModelProvider()
+        ? await generateModelResponse(message, selectedRole)
+        : null) ?? generateLocalResponse(message, selectedRole);
 
-    // 模拟流式响应
+    // 流式响应（SSE 格式与 useAIXiaoyu 客户端解析保持兼容）
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // 模拟逐字输出
-          const words = responseContent.split('');
+          const chars = responseContent.split('');
+          const chunkSize = 2;
           let currentText = '';
 
-          for (let i = 0; i < words.length; i++) {
-            currentText += words[i];
+          for (let i = 0; i < chars.length; i += chunkSize) {
+            currentText += chars.slice(i, i + chunkSize).join('');
             const data = JSON.stringify({
               content: currentText,
               role: selectedRole,
               complexity,
             });
             controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-            // 添加延迟来模拟真实的AI响应
-            await new Promise(resolve => setTimeout(resolve, 30));
+            await new Promise(resolve => setTimeout(resolve, 20));
           }
 
           controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
           controller.close();
         } catch (error) {
-          logger.error('[v0] 流式响应错误:', undefined, error);
+          logger.error('[ai/chat] 流式响应错误:', undefined, error);
           controller.error(error);
         }
       },
@@ -189,7 +219,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    logger.error('[v0] AI API错误:', undefined, error);
+    logger.error('[ai/chat] AI API错误:', undefined, error);
     return new Response(JSON.stringify({ error: '处理失败，请稍后重试' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

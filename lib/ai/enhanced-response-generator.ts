@@ -10,6 +10,18 @@ import {
   getCoordinatedPrompt,
 } from '@/lib/ai_roles';
 import { aiOptimizer } from '@/lib/ai/performance-optimizer';
+import { getModel } from './model-provider';
+
+/** 获取已配置的真实模型实例；未配置时抛出明确错误（调用方应降级处理） */
+function requireModel() {
+  const model = getModel();
+  if (!model) {
+    throw new Error(
+      'AI model provider not configured (set OPENAI_API_KEY or AI_API_KEY + AI_BASE_URL)'
+    );
+  }
+  return model;
+}
 
 export interface EnhancedResponseOptions {
   useCache?: boolean;
@@ -142,7 +154,7 @@ export class EnhancedResponseGenerator {
 
     // 生成响应
     const { text } = await generateText({
-      model: 'openai/gpt-4o-mini',
+      model: requireModel(),
       system: getCoordinatedPrompt(message, [role]),
       prompt: message,
       maxTokens: options?.maxTokens || 300,
@@ -185,14 +197,14 @@ export class EnhancedResponseGenerator {
     // 并行生成主响应和辅助响应
     const [mainResponse, supportResponse] = await Promise.all([
       generateText({
-        model: 'openai/gpt-4o-mini',
+        model: requireModel(),
         system: AI_ROLES[mainRole].systemPrompt,
         prompt: message,
         maxTokens: options?.maxTokens || 250,
         temperature: options?.temperature || 0.7,
       }),
       generateText({
-        model: 'openai/gpt-4o-mini',
+        model: requireModel(),
         system: `基于"${AI_ROLES[supportRole].name}"的视角，针对以下问题给出补充建议（50字以内）：`,
         prompt: message,
         maxTokens: 100,
@@ -241,7 +253,7 @@ export class EnhancedResponseGenerator {
     // 生成综合响应
     const coordinatedPrompt = getCoordinatedPrompt(message, involvedRoles);
     const { text: mainText } = await generateText({
-      model: 'openai/gpt-4o-mini',
+      model: requireModel(),
       system: coordinatedPrompt,
       prompt: message,
       maxTokens: options?.maxTokens || 400,
@@ -252,7 +264,7 @@ export class EnhancedResponseGenerator {
     const roleInsights = await Promise.all(
       involvedRoles.slice(1, 4).map(async role => {
         const { text } = await generateText({
-          model: 'openai/gpt-4o-mini',
+          model: requireModel(),
           system: `你是"${AI_ROLES[role].name}"，请从你的专业角度给出一条简短建议（30字以内）：`,
           prompt: message,
           maxTokens: 60,
@@ -269,7 +281,7 @@ export class EnhancedResponseGenerator {
 
     // 生成行动建议
     const { text: actionsText } = await generateText({
-      model: 'openai/gpt-4o-mini',
+      model: requireModel(),
       system:
         '基于上述分析，给出3条具体可行的行动建议，每条15字以内，用|分隔：',
       prompt: `问题：${message}\n分析：${mainText}`,
