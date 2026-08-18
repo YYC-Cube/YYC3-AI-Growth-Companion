@@ -334,12 +334,12 @@ truststore/
 # ========================================
 
 # Monitoring
-monitoring/
-metrics/
+/monitoring/
+/metrics/
 traces/
 
 # Analytics
-analytics/
+/analytics/
 tracking/
 
 # ========================================
@@ -559,7 +559,7 @@ assets/design/
 # ========================================
 
 # Performance
-performance/
+/performance/
 profiling/
 benchmark/
 *.prof
@@ -598,9 +598,9 @@ scripts/test-*.sh
 # ========================================
 
 # Localization
-locales/
-i18n/
-translations/
+/locales/
+/i18n/
+/translations/
 
 # ========================================
 # 📦 Archive & Backup
