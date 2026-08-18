@@ -1,12 +1,39 @@
-# 更新日志 (Changelog)
+# 变更日志（Changelog）
 
-本文档记录 YYC³-XY-AI 项目的所有重要变更。
+本项目所有显著变更记录于此。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
+版本遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
-版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
+## [3.2.0] - 2026-08-19
+
+### 新增
+- **自研 i18n-core 内置**：零依赖国际化基础设施（I18nEngine/ICU 编译器/插件体系/语言检测/RTL，10 种内置语言）作为一方代码入驻 `lib/i18n-core/`，与 next-intl 双轨并行
+- **标准文档套件**：LICENSE(MIT)、CONTRIBUTING、SECURITY、architecture/api-reference/deployment/testing 全套文档；docs 索引重建，杂散过程文档归档
+- **GitHub Pages 自动部署**：静态着陆页 + 自定义域名 xy.yyc3.vip（`.github/workflows/pages.yml`）
+- README 可视化架构（4 张 Mermaid 图）与 YYC3-Family 顶图
+
+### 修复
+- **.gitignore 十例地雷根治**：全部 64 条未锚定目录规则根锚定（plugins/、data/、i18n/、metrics/、monitoring/、analytics/、performance/ 等），曾被静默排除的 6.6MB 归档文档与监控端点入库
+
+## [3.1.0] - 2026-08-19
+
+### 新增
+- **CI/CD 重建**：7 条重复遗留流水线合并为单条（质量门禁 + 生产冒烟双 job），全绿
+- 安全响应头（nosniff/XFO/RP/PP）+ 生产 CSP
+
+### 修复
+- 生产构建三处阻断（dotenv 入客户端 bundle、firebase 死引用、类型检查开关）
+- bun CI 别名解析差异（badge 数据改相对导入）
+
+## [3.0.0] - 2026-08-18
+
+### 重构（统一合并版）
+- **多版本家族收敛为唯一基线**：以 yyc3-xy-ai 为主干，吸收 xy-01/02/03/05、xy(v0 线) 资产；项目更名 yyc3-ai-growth-companion
+- **真实 AI 通路**：统一 model-provider 工厂（BigModel GLM / OpenAI 兼容），chat 四路由真实调用 + Mock 降级——全家族首次接通 LLM
+- **YYC3-Baby 吸收**：密钥服务端化三代理路由、SQLite 真实持久化（node:sqlite+WAL+种子 8 表）、Next 16.3.1、死簇删除（类型债 1214→778）
+- badges 双服务统一、profile/character 吸收、语音恢复、prom-client 监控、i18n v4 接线、public 图片资产入库
+- 家族仓库数据抢救（xy-01/022 的 .gitignore 致命缺陷修复与在途改动提交）
 
 ---
-
 ## [2.2.0] - 2025-01-21
 
 ### 🎉 新增 (Added)

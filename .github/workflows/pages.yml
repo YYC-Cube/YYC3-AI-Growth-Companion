@@ -1,0 +1,50 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+# 说明：同一推送的代码质量由 ci.yml（质量门禁+生产冒烟）独立把关，
+# 本流水线只负责静态着陆页发布；着陆页为纯静态资产，无构建依赖。
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: 构建并部署静态着陆页
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 组装站点（着陆页 + 品牌资源）
+        run: |
+          mkdir -p _site
+          cp site/index.html site/CNAME _site/
+          # 着陆页引用的本地资源
+          cp public/YYC3-Family.png _site/
+          cp public/icon.svg _site/ 2>/dev/null || true
+          # 简单校验
+          grep -q 'xy.yyc3.vip' _site/CNAME
+          grep -q 'YYC3-Family.png' _site/index.html
+          echo "── 站点清单："
+          ls -la _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

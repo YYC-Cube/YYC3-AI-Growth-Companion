@@ -283,11 +283,15 @@ formatRelativeTime(-3600, 'zh-CN');              // 相对时间
 
 ---
 
-## 📚 更多文档
+## 📚 文档与社区
 
-- **[开发者指南](docs/developer-guide.md)** — 环境搭建、命令、密钥、架构、测试与排障（对齐项目实况）
-- [合并执行报告](docs/12-归档文档/MERGE_EXECUTION_REPORT.md) — 三轮合并全记录
-- [多版本深度分析与合并方案](../DEEP_CODE_ANALYSIS_AND_MERGE_PLAN.md) · [Baby 可并性分析](../YYC3-BABY_MERGEABILITY_ANALYSIS.md)
+| 类别 | 文档 |
+|---|---|
+| 入口 | **[开发者指南](docs/developer-guide.md)** · [文档索引](docs/README.md) · [English README](README_EN.md) |
+| 工程 | [架构设计](docs/architecture.md) · [API 参考](docs/api-reference.md) · [测试指南](docs/testing.md) |
+| 交付 | [部署指南](docs/deployment.md)（含 Pages · xy.yyc3.vip） |
+| 社区 | [贡献指南](CONTRIBUTING.md) · [安全策略](SECURITY.md) · [变更日志](CHANGELOG.md) · [MIT 许可](LICENSE) |
+| 历史 | [文档索引 → 历史档案](docs/README.md#-历史档案只读不再更新)（三轮合并执行报告等） |
 
 <div align="center">
 
