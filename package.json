@@ -1,14 +1,14 @@
 {
-  "name": "yyc3-xy-ai",
-  "version": "1.0.0",
+  "name": "yyc3-ai-growth-companion",
+  "version": "3.0.0",
   "type": "module",
-  "description": "YYC³ 智能插拔式移动AI系统 - Intelligent Pluggable Mobile AI System",
+  "description": "YYC³ AI小语智能成长守护系统（统一合并版）- AI Growth Companion System",
   "private": true,
   "packageManager": "bun@1.1.38",
   "author": "YYC³ <admin@0379.email>",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/YY-Nexus/yyc3-xy-05.git"
+    "url": "https://github.com/YYC-Cube/YYC3-AI-Growth-Companion.git"
   },
   "engines": {
     "bun": ">=1.0.0",
