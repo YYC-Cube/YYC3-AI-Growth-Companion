@@ -16,6 +16,13 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import type { LanguageModel } from 'ai';
 
+/** 过滤 .env.example 抄来的占位符密钥，避免假配置抢占第一优先级 */
+function realKey(value: string | undefined): boolean {
+  if (!value) return false;
+  const v = value.trim();
+  return v.length >= 20 && !v.toLowerCase().includes('your');
+}
+
 interface ResolvedProvider {
   model: LanguageModel;
   name: string;
@@ -28,7 +35,7 @@ function resolveProvider(): ResolvedProvider | null {
   if (cached) return cached;
 
   const openaiKey = process.env['OPENAI_API_KEY'];
-  if (openaiKey) {
+  if (realKey(openaiKey)) {
     const openai = createOpenAI({
       apiKey: openaiKey,
       ...(process.env['OPENAI_BASE_URL']
@@ -36,19 +43,20 @@ function resolveProvider(): ResolvedProvider | null {
         : {}),
     });
     const modelName = process.env['OPENAI_MODEL'] || 'gpt-4o-mini';
-    cached = { model: openai(modelName), name: modelName, source: 'openai' };
+    // 用 Chat Completions 而非 SDK 默认的 Responses API：兼容网关（BigModel 等）只实现前者
+    cached = { model: openai.chat(modelName), name: modelName, source: 'openai' };
     return cached;
   }
 
   const gatewayKey = process.env['AI_API_KEY'];
   const gatewayBase = process.env['AI_BASE_URL'];
-  if (gatewayKey && gatewayBase) {
+  if (realKey(gatewayKey) && gatewayBase) {
     const gateway = createOpenAI({
       apiKey: gatewayKey,
       baseURL: gatewayBase,
     });
     const modelName = process.env['AI_MODEL'] || 'gpt-4o-mini';
-    cached = { model: gateway(modelName), name: modelName, source: 'gateway' };
+    cached = { model: gateway.chat(modelName), name: modelName, source: 'gateway' };
     return cached;
   }
 
