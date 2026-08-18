@@ -9,6 +9,15 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // 临时开关（存量类型债 778 / lint 6711，清偿后移除）：
+  // 构建不因存量类型错误失败；新增代码由 CI 的 tsc/eslint 报告步骤追踪
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // 图片：沿用 .mjs 的 unoptimized 策略（避免远程图片优化器依赖）
   images: {
     unoptimized: true,

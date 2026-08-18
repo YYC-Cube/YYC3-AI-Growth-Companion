@@ -8,10 +8,8 @@
  * - 数据库配置
  */
 
-import dotenv from 'dotenv';
-
-// 加载环境变量
-dotenv.config();
+// 环境变量说明：Next.js 自动加载 .env/.env.local，无需 dotenv
+//（原 dotenv 导入会进入客户端 bundle 并导致构建失败）
 
 /**
  * 获取环境变量
