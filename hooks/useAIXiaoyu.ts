@@ -265,19 +265,41 @@ export function useAIXiaoyu() {
     [messages, voiceSystem, state.currentRole]
   );
 
-  // 语音播报文本 - 完全禁用以避免声音干扰
-  const speakText = useCallback(async (text: string, useRoleVoice = true) => {
-    // 永久禁用所有语音播报功能 - 避免产生啸叫声和AI声音
-    console.log(`[useAIXiaoyu] 语音播报已禁用: ${text.substring(0, 20)}...`);
-    return;
-  }, []);
+  // 语音播报文本（恢复自 yyc3-xy-022 在途工作：角色化语音风格映射）
+  const speakText = useCallback(
+    async (text: string, useRoleVoice = true) => {
+      if (!voiceSystem) return;
 
-  // 停止语音播报 - 完全禁用以避免声音干扰
+      try {
+        if (useRoleVoice && state.currentRole) {
+          const roleStyleMap: Record<
+            string,
+            'cheerful' | 'calm' | 'gentle' | 'professional' | 'warm'
+          > = {
+            advisor: 'professional',
+            companion: 'warm',
+            teacher: 'gentle',
+            coach: 'cheerful',
+            friend: 'warm',
+          };
+          const style = roleStyleMap[state.currentRole] || 'calm';
+          await voiceSystem.speakWithRole(text, style);
+        } else {
+          await voiceSystem.speak(text);
+        }
+      } catch (error) {
+        console.error('[useAIXiaoyu] 语音播报错误:', error);
+      }
+    },
+    [voiceSystem, state.currentRole]
+  );
+
+  // 停止语音播报（恢复自 yyc3-xy-022 在途工作）
   const stopSpeaking = useCallback(() => {
-    // 永久禁用所有语音停止功能 - 避免产生啸叫声和AI声音
-    console.log('[useAIXiaoyu] 语音停止已禁用');
-    return;
-  }, []);
+    if (voiceSystem) {
+      voiceSystem.stopSpeaking();
+    }
+  }, [voiceSystem]);
 
   // 清空对话历史
   const clearMessages = useCallback(() => {

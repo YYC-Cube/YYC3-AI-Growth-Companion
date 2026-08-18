@@ -35,6 +35,11 @@ export default function SmartHomeworkHelper({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const voiceServiceRef = useRef<ReturnType<typeof getVoiceService> | null>(null);
+
+  if (!voiceServiceRef.current) {
+    voiceServiceRef.current = getVoiceService();
+  }
 
   // Handle image upload for homework correction
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -171,13 +176,19 @@ export default function SmartHomeworkHelper({
     }
   };
 
-  // Real text-to-speech for AI feedback - 完全禁用以避免声音干扰
+  // Real text-to-speech for AI feedback（恢复自 yyc3-xy-022 在途工作）
   const speakFeedback = async (text: string) => {
-    // 永久禁用所有语音播放功能 - 避免产生鸣叫声和AI声音
-    console.log(
-      `[SmartHomeworkHelper] 语音播放已禁用: ${text.substring(0, 20)}...`
-    );
-    return;
+    try {
+      if (voiceServiceRef.current) {
+        await voiceServiceRef.current.textToSpeech(text, {
+          voice: 'zh-CN',
+          rate: 1.0,
+          pitch: 1.0,
+        });
+      }
+    } catch (error) {
+      console.error('[SmartHomeworkHelper] 语音播放错误:', error);
+    }
   };
 
   const submitForReview = () => {
