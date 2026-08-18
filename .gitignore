@@ -599,7 +599,6 @@ scripts/test-*.sh
 
 # Localization
 /locales/
-/i18n/
 /translations/
 
 # ========================================
