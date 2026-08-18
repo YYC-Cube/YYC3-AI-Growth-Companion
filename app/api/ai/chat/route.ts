@@ -10,7 +10,8 @@
 
 import { generateText } from 'ai';
 import { selectRoleByContext, getRoleSystemPrompt, type AIRole } from '@/lib/ai_roles';
-import { getModel, hasModelProvider } from '@/lib/ai/model-provider';
+import { getModel, getModelSource, hasModelProvider } from '@/lib/ai/model-provider';
+import { aiChatRequestsTotal } from '@/lib/monitoring/metrics';
 import logger from '@/lib/logger';
 
 // 预设的干净回复集合 - 无密钥/调用失败时的降级路径
@@ -181,6 +182,11 @@ export async function POST(request: Request) {
       (hasModelProvider()
         ? await generateModelResponse(message, selectedRole)
         : null) ?? generateLocalResponse(message, selectedRole);
+
+    aiChatRequestsTotal.inc({
+      role: selectedRole,
+      source: hasModelProvider() ? getModelSource() : 'mock',
+    });
 
     // 流式响应（SSE 格式与 useAIXiaoyu 客户端解析保持兼容）
     const encoder = new TextEncoder();

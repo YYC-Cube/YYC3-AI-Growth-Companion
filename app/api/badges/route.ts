@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import BadgeService from '@/src/services/badgeService';
+import { badgesRequestsTotal, badgesUnlockedTotal } from '@/lib/monitoring/metrics';
 import type { BadgeCategory, BadgeSeries } from '@/src/types/badge';
 
 const badgeService = BadgeService.getInstance();
@@ -28,6 +29,8 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const query = searchParams.get('q');
     const id = searchParams.get('id');
+
+    badgesRequestsTotal.inc({ action: id ? 'detail' : (action ?? 'list') });
 
     // 获取单个勋章
     if (id) {
@@ -115,6 +118,7 @@ export async function POST(request: NextRequest) {
 
     if (action === 'unlock' && id) {
       const badge = await badgeService.unlockBadge(id);
+      if (badge) badgesUnlockedTotal.inc();
       return NextResponse.json({ success: true, data: badge });
     }
 
