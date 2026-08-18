@@ -27,8 +27,8 @@
 *.crt
 *.cer
 *.der
-secrets/
-credentials/
+/secrets/
+/credentials/
 .keys/
 .secrets/
 
@@ -65,7 +65,7 @@ known_hosts
 # ========================================
 
 # Node.js
-node_modules/
+/node_modules/
 .pnp
 .pnp.js
 npm-debug.log*
@@ -78,22 +78,22 @@ yarn.lock
 pnpm-lock.yaml
 
 # Python
-__pycache__/
+/__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
+/env/
+/venv/
+/ENV/
 env.bak/
 venv.bak/
 *.egg-info/
-dist/
-build/
+/dist/
+/build/
 .pytest_cache/
 .coverage
-htmlcov/
+/htmlcov/
 .tox/
 .hypothesis/
 
@@ -102,7 +102,7 @@ htmlcov/
 *.jar
 *.war
 *.ear
-target/
+/target/
 .mvn/
 mvnw
 mvnw.cmd
@@ -113,9 +113,9 @@ mvnw.cmd
 
 # Production Builds
 .next/
-out/
-build/
-dist/
+/out/
+/build/
+/dist/
 .nuxt/
 .cache/
 .parcel-cache/
@@ -142,17 +142,17 @@ dist/
 *.mdb
 *.accdb
 /data/
-db-data/
-database/
-backups/
-dumps/
+/db-data/
+/database/
+/backups/
+/dumps/
 
 # PostgreSQL
 *.dump
 *.sql.backup
 
 # MongoDB
-dump/
+/dump/
 mongod.lock
 
 # Redis
@@ -163,18 +163,18 @@ dump.rdb
 # ========================================
 
 # Test Coverage
-coverage/
+/coverage/
 *.lcov
 .nyc_output/
-test-results/
+/test-results/
 *.coverage
 .coverage
 .coverage.*
-htmlcov/
+/htmlcov/
 junit.xml
 
 # Test Logs
-test-logs/
+/test-logs/
 *.test.log
 
 # ========================================
@@ -182,7 +182,7 @@ test-logs/
 # ========================================
 
 # Application Logs
-logs/
+/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -215,7 +215,7 @@ combined.log
 *.iml
 *.iws
 *.ipr
-out/
+/out/
 
 # Sublime Text
 *.sublime-project
@@ -282,8 +282,8 @@ docker-compose.override.yml
 .docker/
 
 # Container Volumes
-volumes/
-docker-volumes/
+/volumes/
+/docker-volumes/
 
 # ========================================
 # ☁️ Cloud & Deployment
@@ -321,8 +321,8 @@ docker-volumes/
 *.cer
 *.der
 *.csr
-keystore/
-truststore/
+/keystore/
+/truststore/
 
 # Encrypted Files
 *.enc
@@ -336,11 +336,11 @@ truststore/
 # Monitoring
 /monitoring/
 /metrics/
-traces/
+/traces/
 
 # Analytics
 /analytics/
-tracking/
+/tracking/
 
 # ========================================
 # 🎨 Assets & Media
@@ -384,13 +384,13 @@ tracking/
 
 # Generated Documentation
 docs/generated/
-api-docs/
-swagger-ui/
+/api-docs/
+/swagger-ui/
 
 # Reports
-reports/
+/reports/
 *.report
-benchmark-results/
+/benchmark-results/
 
 # ========================================
 # 🔄 Temporary & Cache Files
@@ -403,8 +403,8 @@ benchmark-results/
 *.swp
 *.swo
 .cache/
-tmp/
-temp/
+/tmp/
+/temp/
 *.cache
 
 # OS Cache
@@ -425,7 +425,7 @@ dev-config.json
 staging-config.json
 
 # AI/ML Models
-models/
+/models/
 *.model
 *.h5
 *.pkl
@@ -433,23 +433,23 @@ models/
 *.onnx
 
 # Training Data
-training-data/
-datasets/
-data-raw/
+/training-data/
+/datasets/
+/data-raw/
 
 # Experiment Results
-experiments/
-runs/
-mlruns/
+/experiments/
+/runs/
+/mlruns/
 
 # ========================================
 # 🔍 Security Scanning & Analysis
 # ========================================
 
 # Security Scan Results
-security-scan/
-vulnerability-report/
-audit-report/
+/security-scan/
+/vulnerability-report/
+/audit-report/
 *.security
 
 # ========================================
@@ -521,13 +521,13 @@ android/.idea/
 # ========================================
 
 # Experimental Features
-experimental/
-features/
-feature-flags/
+/experimental/
+/features/
+/feature-flags/
 
 # A/B Testing
-ab-tests/
-experiments/
+/ab-tests/
+/experiments/
 
 # ========================================
 # 📋 CI/CD & Automation
@@ -539,7 +539,7 @@ experiments/
 bitbucket-pipelines.local.yml
 
 # Automation
-automation/
+/automation/
 scripts/local-*.sh
 
 # ========================================
@@ -547,7 +547,7 @@ scripts/local-*.sh
 # ========================================
 
 # Design Files
-design/
+/design/
 assets/design/
 *.fig
 *.sketch
@@ -560,8 +560,8 @@ assets/design/
 
 # Performance
 /performance/
-profiling/
-benchmark/
+/profiling/
+/benchmark/
 *.prof
 *.profile
 
@@ -570,18 +570,18 @@ benchmark/
 # ========================================
 
 # Plugins
-plugins/
-extensions/
-addons/
+/plugins/
+/extensions/
+/addons/
 
 # ========================================
 # 📝 Notes & Documentation
 # ========================================
 
 # Notes
-notes/
-scratchpad/
-todo/
+/notes/
+/scratchpad/
+/todo/
 TODO.md
 
 # ========================================
@@ -606,8 +606,8 @@ scripts/test-*.sh
 # ========================================
 
 # Archives
-archive/
-backup/
+/archive/
+/backup/
 *.backup
 *.old
 
