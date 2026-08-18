@@ -141,7 +141,7 @@ dist/
 *.db3
 *.mdb
 *.accdb
-data/
+/data/
 db-data/
 database/
 backups/
