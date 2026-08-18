@@ -26,9 +26,10 @@ const nextConfig: NextConfig = {
   // 配置Turbopack
   turbopack: {},
 
-  // 安全响应头（移植自 YYC3-Baby 安全加固）
+  // 安全响应头（移植自 YYC3-Baby 安全加固；CSP 仅生产环境追加，
+  // Next 16 不接受空 headers 数组，故开发环境不注册该条规则）
   async headers() {
-    return [
+    const rules = [
       {
         source: '/(.*)',
         headers: [
@@ -44,30 +45,31 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        // 开发环境需要 eval/inline；生产收紧脚本来源
-        source: '/((?!_next/static).*)',
-        headers:
-          process.env.NODE_ENV === 'production'
-            ? [
-                {
-                  key: 'Content-Security-Policy',
-                  value: [
-                    "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline'",
-                    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-                    "font-src 'self' https://fonts.gstatic.com data:",
-                    "img-src 'self' data: blob: https:",
-                    "media-src 'self' blob: data:",
-                    "connect-src 'self' https://open.bigmodel.cn",
-                    "worker-src 'self' blob:",
-                    "frame-ancestors 'self'",
-                  ].join('; '),
-                },
-              ]
-            : [],
-      },
     ];
+
+    if (process.env.NODE_ENV === 'production') {
+      rules.push({
+        source: '/((?!_next/static).*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "img-src 'self' data: blob: https:",
+              "media-src 'self' blob: data:",
+              "connect-src 'self' https://open.bigmodel.cn",
+              "worker-src 'self' blob:",
+              "frame-ancestors 'self'",
+            ].join('; '),
+          },
+        ],
+      });
+    }
+
+    return rules;
   },
 
   // 路径别名 '@/*' 由 tsconfig.json paths 提供（原 .mjs 的 webpack alias
