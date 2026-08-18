@@ -33,7 +33,8 @@ export default function middleware(request: NextRequest): NextResponse {
 
 export const config = {
   matcher: [
-    // 匹配所有路径（含 /api），排除静态资源；/api 由上方分支只加缓存头、不做语言路由
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    // 页面：排除静态资源与一切带扩展名的文件路径（public/ 图片、favicon 等
+    // 均绕过语言路由，否则会被 next-intl 当作页面处理导致 404）
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
 };
