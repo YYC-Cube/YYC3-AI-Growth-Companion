@@ -1,10 +1,10 @@
 /**
  * 统一中间件（合并版）：性能/缓存头 + 受控的 next-intl 语言路由
  *
- * 语言路由只作用于 [locale] 子树实际拥有的页面（/, /growth, /ai-chat
- * 及 /en 前缀路径）；其余根路由（settings/badges/profile 等）直接放行，
- * 由根布局的中文实现直出——否则 as-needed 重写会指向不存在的
- * /zh/<path> 导致 404（2026-08-19 修复的历史回归）。
+ * 语言路由只作用于显式语言前缀（/en、/zh/...）——英文用户经 [locale]
+ * 子树的国际化镜像页访问；无前缀的根路径一律放行，由根目录的**完整版**
+ * 页面直出。此前曾把 / 与 /growth 也交给语言路由，导致被 [locale] 的
+ * 超简化镜像页遮蔽（首页/成长页渲染成空壳，2026-08-19 二次修复）。
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
@@ -17,16 +17,8 @@ const handleI18nRouting = createMiddleware({
   localePrefix: 'as-needed',
 });
 
-/** [locale] 子树拥有的路由（相对根路径） */
-const LOCALE_ROUTES = ['/', '/growth', '/ai-chat'];
-
-function isLocaleRouted(pathname: string): boolean {
-  // 显式语言前缀（/en、/zh/...）
-  if (locales.some(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))) {
-    return true;
-  }
-  // 无前缀时仅 [locale] 子树拥有的页面参与语言路由
-  return LOCALE_ROUTES.includes(pathname);
+function hasLocalePrefix(pathname: string): boolean {
+  return locales.some(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
 }
 
 export default function middleware(request: NextRequest): NextResponse {
@@ -39,7 +31,7 @@ export default function middleware(request: NextRequest): NextResponse {
   }
 
   const start = Date.now();
-  const response = isLocaleRouted(pathname)
+  const response = hasLocalePrefix(pathname)
     ? handleI18nRouting(request)
     : NextResponse.next();
   response.headers.set('X-Response-Time', `${Date.now() - start}ms`);
