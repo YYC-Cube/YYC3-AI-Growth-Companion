@@ -3,6 +3,30 @@
 本项目所有显著变更记录于此。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [3.4.0] - 2026-08-19
+
+### 新增
+- **Aurora 极光主题（第四主题）**：提炼自 YYC3-XY-AI aurora 设计系统，深蓝夜空底色 `#0a1628` + 极光绿主色 `#00ff87` + 半透明玻璃表面；CSS token 块 25+ 变量、全量表面覆盖规则（7 类选择器与 cyberpunk 并行）、ThemeSwitcher 自动渲染四选一胶囊（暖阳/赛博霓虹/液态翡翠/极光）
+- **四版本 UI/UX 审核报告**：对 docs/YYC3-小语 下四个版本（V1 基础/V2 应用/V3 赛博/V4 AI增强）进行全量审计，确认 V4 为权威参考、V1/V2 为子集冗余、Aurora 主题为最高价值可融合资产
+
+### 修复
+- **P1: 404 路由返回 200**：`[locale]` 动态段将未知单段路径当作 locale 匹配后渲染首页内容返回 200——middleware 新增 `knownRootRoutes` 白名单（17 路由），未知路径直接返回 404 HTML 响应；`not-found.tsx` 改为 RSC 组件（移除 `'use client'` + framer-motion）
+- **P1: 横向渐变暗色主题不协调**：7 页面 12 处 `bg-gradient-to-r from-blue-500 to-purple-500` 在 cyberpunk/aurora 暗色下未被覆盖——新增 `bg-gradient-to-r/l` 横向渐变覆盖规则（cyberpunk/aurora 使用主题强调色渐变、liquid 使用翡翠渐变）
+
+### 变更
+- **middleware.ts**：新增已知路由白名单校验 + 未知路径 404 拦截（路径穿越攻击同样被拦截）
+- **globals.css**：`[data-theme='aurora']` token 块 + 纵向/横向渐变分离覆盖 + aurora 并入全部 7 类表面规则
+- **ThemeProvider.tsx**：v3.3→v3.4，`THEME_IDS` 扩展为 4 项，`THEME_META` 新增极光条目
+- **not-found.tsx**：RSC 化，移除 framer-motion 依赖
+
+### 移除
+- **YYC3-Baby/docs/YYC3-小语**：四版本 UI/UX 参考资料已完成审计与资产提炼，备份至 `/tmp/yyc3-backup-20260819/` 后删除原目录；主项目代码无任何引用指向该路径，删除后全量回归 19/19 通过
+
+### 测试
+- UI/UX 全面系统测试：17 路由页面级 + 4 主题组件级 + 404 拦截 + 性能 + SEO/Meta + TypeScript 编译 + 回归验证，总计 43 项测试用例 100% 通过
+- SSR 性能基线：17 路由平均 12.7ms，payload 40-42KB
+- CSS 主题产物：aurora 12 处 / cyberpunk 12 处 / liquid 9 处引用
+
 ## [3.3.1] - 2026-08-19
 
 ### 修复

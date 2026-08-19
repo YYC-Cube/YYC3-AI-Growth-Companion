@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -8,13 +8,13 @@
   --color-primary-dark: #2563eb;
   --color-primary-light: #60a5fa;
   --color-primary-foreground: #ffffff;
-  
+
   /* 辅助色 */
   --color-secondary-purple: #8b5cf6;
   --color-secondary-purple-foreground: #ffffff;
   --color-secondary-pink: #ec4899;
   --color-secondary-pink-foreground: #ffffff;
-  
+
   /* 功能色 */
   --color-success: #10b981;
   --color-success-foreground: #ffffff;
@@ -24,7 +24,7 @@
   --color-error-foreground: #ffffff;
   --color-info: #3b82f6;
   --color-info-foreground: #ffffff;
-  
+
   /* 中性色 */
   --color-white: #ffffff;
   --color-gray-100: #f9fafb;
@@ -36,30 +36,30 @@
   --color-gray-700: #4b5563;
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
-  
+
   /* 背景色 */
   --color-background: #f0f9ff;
   --color-card: #ffffff;
   --color-component: #f8fafc;
   --color-hover: #f1f5f9;
   --color-selected: #e0f2fe;
-  
+
   /* 文本色 - 优化对比度以符合WCAG AA标准 */
   --color-foreground: #1f2937;
   --color-muted-foreground: #4b5563;
   --color-secondary-foreground: #374151;
-  
+
   /* 边框色 */
   --color-border: #e5e7eb;
   --color-input: #e5e7eb;
   --color-ring: #3b82f6;
-  
+
   /* 阴影 */
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
   --shadow-glow: 0 0 15px rgba(255, 183, 77, 0.4);
-  
+
   /* 圆角 */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -124,13 +124,13 @@
   --color-primary-dark: #3b82f6;
   --color-primary-light: #93c5fd;
   --color-primary-foreground: #ffffff;
-  
+
   /* 辅助色 */
   --color-secondary-purple: #a78bfa;
   --color-secondary-purple-foreground: #ffffff;
   --color-secondary-pink: #f472b6;
   --color-secondary-pink-foreground: #ffffff;
-  
+
   /* 功能色 */
   --color-success: #34d399;
   --color-success-foreground: #ffffff;
@@ -140,7 +140,7 @@
   --color-error-foreground: #ffffff;
   --color-info: #60a5fa;
   --color-info-foreground: #ffffff;
-  
+
   /* 中性色 */
   --color-white: #111827;
   --color-gray-100: #1f2937;
@@ -152,24 +152,24 @@
   --color-gray-700: #e5e7eb;
   --color-gray-800: #f3f4f6;
   --color-gray-900: #f9fafb;
-  
+
   /* 背景色 */
   --color-background: #0f172a;
   --color-card: #1e293b;
   --color-component: #334155;
   --color-hover: #475569;
   --color-selected: #334155;
-  
+
   /* 文本色 */
   --color-foreground: #f9fafb;
   --color-muted-foreground: #9ca3af;
   --color-secondary-foreground: #d1d5db;
-  
+
   /* 边框色 */
   --color-border: #374151;
   --color-input: #4b5563;
   --color-ring: #60a5fa;
-  
+
   /* 保持与现有系统的兼容性 */
   --background: var(--color-background);
   --foreground: var(--color-foreground);
@@ -207,9 +207,9 @@
 
 @theme inline {
   /* 字体 */
-  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-rounded: "YouYuan", "Varela Round", sans-serif;
-  
+  --font-sans: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-rounded: 'YouYuan', 'Varela Round', sans-serif;
+
   /* 排版层级 */
   --font-h1: 32px/40px var(--font-sans);
   --font-h2: 28px/36px var(--font-sans);
@@ -220,7 +220,7 @@
   --font-p2: 14px/20px var(--font-sans);
   --font-p3: 12px/16px var(--font-sans);
   --font-p4: 10px/14px var(--font-sans);
-  
+
   /* 字重 */
   --font-weight-light: 300;
   --font-weight-normal: 400;
@@ -254,13 +254,13 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   /* 圆角 */
   --radius-sm: var(--radius-md);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
   --radius-xl: calc(var(--radius) + 8px);
-  
+
   /* 侧边栏 */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -283,57 +283,58 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
-  
+
   /* 标题样式 */
   h1 {
     @apply text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight;
   }
-  
+
   h2 {
     @apply text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 leading-tight;
   }
-  
+
   h3 {
     @apply text-xl md:text-2xl font-semibold text-gray-800 dark:text-gray-200 leading-tight;
   }
-  
+
   h4 {
     @apply text-lg md:text-xl font-semibold text-gray-700 dark:text-gray-300 leading-tight;
   }
-  
+
   h5 {
     @apply text-base md:text-lg font-medium text-gray-700 dark:text-gray-300 leading-tight;
   }
-  
+
   /* 段落样式 */
   p {
     @apply text-base text-gray-600 dark:text-gray-400 leading-relaxed;
   }
-  
+
   /* 辅助文本 */
   .text-sm {
     @apply text-sm text-gray-500 dark:text-gray-500 leading-relaxed;
   }
-  
+
   .text-xs {
     @apply text-xs text-gray-400 dark:text-gray-600 leading-tight;
   }
-  
+
   /* 强调文本 */
   strong {
     @apply font-semibold text-gray-800 dark:text-gray-200;
   }
-  
+
   /* 链接样式 */
   a {
     @apply text-primary hover:text-[var(--color-primary-dark)] transition-colors duration-200;
   }
-  
+
   /* 列表样式 */
-  ul, ol {
+  ul,
+  ol {
     @apply space-y-2;
   }
-  
+
   li {
     @apply text-gray-600 dark:text-gray-400;
   }
@@ -341,7 +342,7 @@
 
 /* 自定义工具类 */
 .font-rounded {
-  font-family: "YouYuan", "Varela Round", sans-serif;
+  font-family: 'YouYuan', 'Varela Round', sans-serif;
 }
 
 .shadow-soft {
@@ -403,9 +404,9 @@
 
 :root {
   /* 表面与文字（default：暖阳浅色） */
-  --bg-app: #fffbeb;            /* 页面底（amber-50） */
+  --bg-app: #fffbeb; /* 页面底（amber-50） */
   --bg-surface: #ffffff;
-  --bg-surface-soft: #fef3c7;   /* amber-100 */
+  --bg-surface-soft: #fef3c7; /* amber-100 */
   --fg-default: #1f2937;
   --fg-muted: #6b7280;
   --border-soft: #f3e8c8;
@@ -441,15 +442,40 @@
   --color-primary-light: #34d399;
   --color-secondary-purple: #14b8a6;
   --color-secondary-pink: #2dd4bf;
-  --bg-app: #f0fdf9;            /* teal-50 */
+  --bg-app: #f0fdf9; /* teal-50 */
   --bg-surface: #ffffff;
-  --bg-surface-soft: #ccfbf1;   /* teal-100 */
+  --bg-surface-soft: #ccfbf1; /* teal-100 */
   --fg-default: #134e4a;
   --fg-muted: #5f7470;
   --border-soft: #b8ece2;
   --theme-accent: #10b981;
   --theme-accent-fg: #ffffff;
   --theme-glow: rgba(16, 185, 129, 0.18);
+}
+
+[data-theme='aurora'] {
+  /* 极光（提炼自 YYC3-XY-AI aurora 设计系统） */
+  --color-primary: #00ff87;
+  --color-primary-dark: #00cc6a;
+  --color-primary-light: #33ff9f;
+  --color-primary-foreground: #0a1628;
+  --color-secondary-purple: #6c5ce7;
+  --color-secondary-purple-foreground: #ffffff;
+  --color-secondary-pink: #ff6b9d;
+  --color-secondary-pink-foreground: #ffffff;
+  --color-success: #60efff;
+  --color-warning: #ffd93d;
+  --color-error: #ff6b6b;
+  --bg-app: #0a1628;
+  --bg-surface: rgba(255, 255, 255, 0.06);
+  --bg-surface-soft: rgba(255, 255, 255, 0.1);
+  --fg-default: rgba(255, 255, 255, 0.9);
+  --fg-muted: rgba(255, 255, 255, 0.55);
+  --border-soft: rgba(0, 255, 135, 0.15);
+  --theme-accent: #00ff87;
+  --theme-accent-fg: #0a1628;
+  --theme-glow: rgba(0, 255, 135, 0.22);
+  color-scheme: dark;
 }
 
 /* 主题切换的全局过渡（尊重减少动效偏好） */
@@ -464,27 +490,39 @@ body {
    主题模式下以属性选择器做有限覆盖，保证三主题即时可见；
    全面 token 化列于主题路线图。 */
 [data-theme='cyberpunk'] body,
+[data-theme='aurora'] body,
 [data-theme='liquid'] body {
   background-color: var(--bg-app);
   color: var(--fg-default);
 }
 
 [data-theme='cyberpunk'] .bg-white,
+[data-theme='aurora'] .bg-white,
 [data-theme='liquid'] .bg-white {
   background-color: var(--bg-surface);
   color: var(--fg-default);
 }
 
 [data-theme='cyberpunk'] .bg-amber-50,
+[data-theme='aurora'] .bg-amber-50,
 [data-theme='cyberpunk'] .bg-orange-50,
+[data-theme='aurora'] .bg-orange-50,
 [data-theme='cyberpunk'] .bg-yellow-50,
+[data-theme='aurora'] .bg-yellow-50,
 [data-theme='cyberpunk'] .bg-sky-50,
+[data-theme='aurora'] .bg-sky-50,
 [data-theme='cyberpunk'] .bg-sky-100,
+[data-theme='aurora'] .bg-sky-100,
 [data-theme='cyberpunk'] .bg-red-50,
+[data-theme='aurora'] .bg-red-50,
 [data-theme='cyberpunk'] .bg-green-50,
+[data-theme='aurora'] .bg-green-50,
 [data-theme='cyberpunk'] .bg-blue-50,
+[data-theme='aurora'] .bg-blue-50,
 [data-theme='cyberpunk'] .bg-gray-50,
-[data-theme='cyberpunk'] .bg-slate-50 {
+[data-theme='aurora'] .bg-gray-50,
+[data-theme='cyberpunk'] .bg-slate-50,
+[data-theme='aurora'] .bg-slate-50 {
   background-color: var(--bg-surface-soft);
 }
 
@@ -497,12 +535,28 @@ body {
 /* ── 主题深度覆盖（v3.3.1：渐变底/边框/卡片文字全接管）── */
 
 /* 页面级渐变背景 → 主题底色（暖阳渐变在两套非默认主题下替换为主题渐变） */
+/* 纵向渐变背景 → 主题底色 */
 [data-theme='cyberpunk'] .bg-gradient-to-b,
+[data-theme='aurora'] .bg-gradient-to-b,
 [data-theme='cyberpunk'] .bg-gradient-to-br,
-[data-theme='cyberpunk'] .bg-gradient-to-t {
+[data-theme='aurora'] .bg-gradient-to-br,
+[data-theme='cyberpunk'] .bg-gradient-to-t,
+[data-theme='aurora'] .bg-gradient-to-t {
   background-image: linear-gradient(
     to bottom,
     var(--bg-app),
+    var(--bg-surface)
+  ) !important;
+}
+
+/* 横向渐变背景 → 主题强调色渐变 */
+[data-theme='cyberpunk'] .bg-gradient-to-r,
+[data-theme='aurora'] .bg-gradient-to-r,
+[data-theme='cyberpunk'] .bg-gradient-to-l,
+[data-theme='aurora'] .bg-gradient-to-l {
+  background-image: linear-gradient(
+    to right,
+    var(--theme-accent),
     var(--bg-surface)
   ) !important;
 }
@@ -517,52 +571,95 @@ body {
   ) !important;
 }
 
+[data-theme='liquid'] .bg-gradient-to-r,
+[data-theme='liquid'] .bg-gradient-to-l {
+  background-image: linear-gradient(
+    to right,
+    var(--theme-accent),
+    #ffffff
+  ) !important;
+}
+
 /* 卡片与面板文字在深色主题下保持可读 */
 [data-theme='cyberpunk'] .bg-white,
+[data-theme='aurora'] .bg-white,
 [data-theme='cyberpunk'] .bg-amber-50,
+[data-theme='aurora'] .bg-amber-50,
 [data-theme='cyberpunk'] .bg-amber-100,
+[data-theme='aurora'] .bg-amber-100,
 [data-theme='cyberpunk'] .bg-orange-50,
+[data-theme='aurora'] .bg-orange-50,
 [data-theme='cyberpunk'] .bg-yellow-50,
+[data-theme='aurora'] .bg-yellow-50,
 [data-theme='cyberpunk'] .bg-sky-50,
+[data-theme='aurora'] .bg-sky-50,
 [data-theme='cyberpunk'] .bg-sky-100,
+[data-theme='aurora'] .bg-sky-100,
 [data-theme='cyberpunk'] .bg-red-50,
+[data-theme='aurora'] .bg-red-50,
 [data-theme='cyberpunk'] .bg-green-50,
+[data-theme='aurora'] .bg-green-50,
 [data-theme='cyberpunk'] .bg-blue-50,
+[data-theme='aurora'] .bg-blue-50,
 [data-theme='cyberpunk'] .bg-gray-50,
+[data-theme='aurora'] .bg-gray-50,
 [data-theme='cyberpunk'] .bg-slate-50,
-[data-theme='cyberpunk'] .bg-white\/20 {
+[data-theme='aurora'] .bg-slate-50,
+[data-theme='cyberpunk'] .bg-white\/20,
+[data-theme='aurora'] .bg-white\/20 {
   color: var(--fg-default);
 }
 
 /* 深色主题下，原“深色文字类”翻转为浅色 */
 [data-theme='cyberpunk'] .text-gray-900,
+[data-theme='aurora'] .text-gray-900,
 [data-theme='cyberpunk'] .text-gray-800,
+[data-theme='aurora'] .text-gray-800,
 [data-theme='cyberpunk'] .text-gray-700,
+[data-theme='aurora'] .text-gray-700,
 [data-theme='cyberpunk'] .text-slate-900,
+[data-theme='aurora'] .text-slate-900,
 [data-theme='cyberpunk'] .text-slate-800,
+[data-theme='aurora'] .text-slate-800,
 [data-theme='cyberpunk'] .text-slate-700,
+[data-theme='aurora'] .text-slate-700,
 [data-theme='cyberpunk'] .text-amber-900,
-[data-theme='cyberpunk'] .text-orange-900 {
+[data-theme='aurora'] .text-amber-900,
+[data-theme='cyberpunk'] .text-orange-900,
+[data-theme='aurora'] .text-orange-900 {
   color: var(--fg-default) !important;
 }
 
 [data-theme='cyberpunk'] .text-gray-600,
+[data-theme='aurora'] .text-gray-600,
 [data-theme='cyberpunk'] .text-gray-500,
+[data-theme='aurora'] .text-gray-500,
 [data-theme='cyberpunk'] .text-slate-600,
-[data-theme='cyberpunk'] .text-slate-500 {
+[data-theme='aurora'] .text-slate-600,
+[data-theme='cyberpunk'] .text-slate-500,
+[data-theme='aurora'] .text-slate-500 {
   color: var(--fg-muted) !important;
 }
 
 /* 边框主题化 */
 [data-theme='cyberpunk'] .border,
+[data-theme='aurora'] .border,
 [data-theme='cyberpunk'] .border-gray-100,
+[data-theme='aurora'] .border-gray-100,
 [data-theme='cyberpunk'] .border-gray-200,
+[data-theme='aurora'] .border-gray-200,
 [data-theme='cyberpunk'] .border-slate-100,
+[data-theme='aurora'] .border-slate-100,
 [data-theme='cyberpunk'] .border-slate-200,
+[data-theme='aurora'] .border-slate-200,
 [data-theme='cyberpunk'] .border-amber-100,
+[data-theme='aurora'] .border-amber-100,
 [data-theme='cyberpunk'] .border-amber-200,
+[data-theme='aurora'] .border-amber-200,
 [data-theme='cyberpunk'] .border-orange-100,
-[data-theme='cyberpunk'] .border-orange-200 {
+[data-theme='aurora'] .border-orange-100,
+[data-theme='cyberpunk'] .border-orange-200,
+[data-theme='aurora'] .border-orange-200 {
   border-color: var(--border-soft) !important;
 }
 
@@ -593,18 +690,28 @@ body {
 
 /* 赛博主题强调色：琥珀系动作色转霓虹青 */
 [data-theme='cyberpunk'] .bg-amber-400,
+[data-theme='aurora'] .bg-amber-400,
 [data-theme='cyberpunk'] .bg-amber-500,
+[data-theme='aurora'] .bg-amber-500,
 [data-theme='cyberpunk'] .bg-orange-400,
+[data-theme='aurora'] .bg-orange-400,
 [data-theme='cyberpunk'] .bg-orange-500,
+[data-theme='aurora'] .bg-orange-500,
 [data-theme='cyberpunk'] .bg-yellow-400,
-[data-theme='cyberpunk'] .bg-yellow-500 {
+[data-theme='aurora'] .bg-yellow-400,
+[data-theme='cyberpunk'] .bg-yellow-500,
+[data-theme='aurora'] .bg-yellow-500 {
   background-color: var(--theme-accent) !important;
   color: var(--theme-accent-fg) !important;
 }
 
 [data-theme='cyberpunk'] .text-amber-500,
+[data-theme='aurora'] .text-amber-500,
 [data-theme='cyberpunk'] .text-amber-600,
+[data-theme='aurora'] .text-amber-600,
 [data-theme='cyberpunk'] .text-orange-500,
-[data-theme='cyberpunk'] .text-orange-600 {
+[data-theme='aurora'] .text-orange-500,
+[data-theme='cyberpunk'] .text-orange-600,
+[data-theme='aurora'] .text-orange-600 {
   color: var(--theme-accent) !important;
 }

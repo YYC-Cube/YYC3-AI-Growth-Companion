@@ -1,120 +1,396 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYC³ AI小语 · 智能成长守护系统</title>
-<meta name="description" content="0-22 岁全周期 AI 成长守护平台：真实 LLM 对话、作业批改、语音交互、成长记录、勋章体系——统一基线版。">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-<style>
-  :root{
-    --bg:#FFF9E6; --card:#ffffff; --ink:#1f2937; --sub:#6b7280;
-    --brand:#f59e0b; --brand2:#3b82f6; --line:#f3e8c8; --green:#10b981;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-  /* 顶栏 */
-  header{position:sticky;top:0;z-index:10;background:rgba(255,249,230,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
-  .logo .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#f97316);display:grid;place-items:center;color:#fff;font-size:18px}
-  nav a{color:var(--sub);text-decoration:none;margin-left:22px;font-size:14.5px}
-  nav a:hover{color:var(--ink)}
-  /* hero */
-  .hero{text-align:center;padding:56px 0 32px}
-  .hero img{width:100%;max-width:880px;border-radius:14px;box-shadow:0 12px 40px rgba(245,158,11,.18)}
-  .hero h1{font-size:clamp(28px,4.4vw,44px);margin:26px 0 10px;letter-spacing:-.5px}
-  .hero h1 span{background:linear-gradient(90deg,var(--brand),#ef4444);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p{color:var(--sub);font-size:clamp(15px,2vw,18px);max-width:720px;margin:0 auto}
-  .cta{margin-top:28px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:.2s}
-  .btn-primary{background:linear-gradient(135deg,var(--brand),#f97316);color:#fff;box-shadow:0 6px 18px rgba(245,158,11,.35)}
-  .btn-primary:hover{transform:translateY(-2px)}
-  .btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:#fff}
-  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
-  /* 徽章条 */
-  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:26px 0 8px}
-  .pill{font-size:12.5px;padding:5px 12px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--sub)}
-  .pill b{color:var(--green)}
-  /* 能力卡 */
-  section{padding:44px 0}
-  h2{font-size:clamp(22px,3vw,30px);text-align:center;margin-bottom:8px}
-  .sub{text-align:center;color:var(--sub);margin-bottom:34px;font-size:15px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;transition:.25s}
-  .card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(31,41,55,.08)}
-  .card .ico{font-size:30px;margin-bottom:12px}
-  .card h3{font-size:17px;margin-bottom:8px}
-  .card p{color:var(--sub);font-size:14px}
-  /* 架构 */
-  .arch{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;overflow-x:auto}
-  .arch pre{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.75;color:#374151}
-  .arch .l1{color:#b45309;font-weight:700}.arch .l2{color:#1d4ed8;font-weight:700}
-  .arch .l3{color:#047857;font-weight:700}.arch .l4{color:#9d174d;font-weight:700}
-  /* 链接区 */
-  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-  .link{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;color:var(--ink);transition:.2s}
-  .link:hover{border-color:var(--brand2);transform:translateY(-2px)}
-  .link .i{font-size:20px}
-  .link small{display:block;color:var(--sub)}
-  footer{border-top:1px solid var(--line);margin-top:40px;padding:28px 0 40px;text-align:center;color:var(--sub);font-size:13.5px}
-  footer a{color:var(--brand);text-decoration:none}
-  @media(max-width:640px){nav a{margin-left:14px;font-size:13px}.nav .hide-m{display:none}}
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YYC³ AI小语 · 智能成长守护系统</title>
+    <meta
+      name="description"
+      content="0-22 岁全周期 AI 成长守护平台：真实 LLM 对话、作业批改、语音交互、成长记录、勋章体系——统一基线版。"
+    />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <style>
+      :root {
+        --bg: #fff9e6;
+        --card: #ffffff;
+        --ink: #1f2937;
+        --sub: #6b7280;
+        --brand: #f59e0b;
+        --brand2: #3b82f6;
+        --line: #f3e8c8;
+        --green: #10b981;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.6;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      /* 顶栏 */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(255, 249, 230, 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .logo .dot {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--brand), #f97316);
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 18px;
+      }
+      nav a {
+        color: var(--sub);
+        text-decoration: none;
+        margin-left: 22px;
+        font-size: 14.5px;
+      }
+      nav a:hover {
+        color: var(--ink);
+      }
+      /* hero */
+      .hero {
+        text-align: center;
+        padding: 56px 0 32px;
+      }
+      .hero img {
+        width: 100%;
+        max-width: 880px;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(245, 158, 11, 0.18);
+      }
+      .hero h1 {
+        font-size: clamp(28px, 4.4vw, 44px);
+        margin: 26px 0 10px;
+        letter-spacing: -0.5px;
+      }
+      .hero h1 span {
+        background: linear-gradient(90deg, var(--brand), #ef4444);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .hero p {
+        color: var(--sub);
+        font-size: clamp(15px, 2vw, 18px);
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .cta {
+        margin-top: 28px;
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 26px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        text-decoration: none;
+        transition: 0.2s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--brand), #f97316);
+        color: #fff;
+        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+      }
+      .btn-ghost {
+        border: 1.5px solid var(--line);
+        color: var(--ink);
+        background: #fff;
+      }
+      .btn-ghost:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      /* 徽章条 */
+      .badges {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 26px 0 8px;
+      }
+      .pill {
+        font-size: 12.5px;
+        padding: 5px 12px;
+        border-radius: 99px;
+        background: #fff;
+        border: 1px solid var(--line);
+        color: var(--sub);
+      }
+      .pill b {
+        color: var(--green);
+      }
+      /* 能力卡 */
+      section {
+        padding: 44px 0;
+      }
+      h2 {
+        font-size: clamp(22px, 3vw, 30px);
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--sub);
+        margin-bottom: 34px;
+        font-size: 15px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        transition: 0.25s;
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 34px rgba(31, 41, 55, 0.08);
+      }
+      .card .ico {
+        font-size: 30px;
+        margin-bottom: 12px;
+      }
+      .card h3 {
+        font-size: 17px;
+        margin-bottom: 8px;
+      }
+      .card p {
+        color: var(--sub);
+        font-size: 14px;
+      }
+      /* 架构 */
+      .arch {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 28px;
+        overflow-x: auto;
+      }
+      .arch pre {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12.5px;
+        line-height: 1.75;
+        color: #374151;
+      }
+      .arch .l1 {
+        color: #b45309;
+        font-weight: 700;
+      }
+      .arch .l2 {
+        color: #1d4ed8;
+        font-weight: 700;
+      }
+      .arch .l3 {
+        color: #047857;
+        font-weight: 700;
+      }
+      .arch .l4 {
+        color: #9d174d;
+        font-weight: 700;
+      }
+      /* 链接区 */
+      .links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+      }
+      .link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        text-decoration: none;
+        color: var(--ink);
+        transition: 0.2s;
+      }
+      .link:hover {
+        border-color: var(--brand2);
+        transform: translateY(-2px);
+      }
+      .link .i {
+        font-size: 20px;
+      }
+      .link small {
+        display: block;
+        color: var(--sub);
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 40px;
+        padding: 28px 0 40px;
+        text-align: center;
+        color: var(--sub);
+        font-size: 13.5px;
+      }
+      footer a {
+        color: var(--brand);
+        text-decoration: none;
+      }
+      @media (max-width: 640px) {
+        nav a {
+          margin-left: 14px;
+          font-size: 13px;
+        }
+        .nav .hide-m {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <div class="logo">
+          <div class="dot">语</div>
+          YYC³ AI小语
+        </div>
+        <nav>
+          <a href="#features">能力</a>
+          <a href="#arch">架构</a>
+          <a href="#docs">文档</a>
+          <a
+            class="hide-m"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion"
+            target="_blank"
+            >GitHub ↗</a
+          >
+        </nav>
+      </div>
+    </header>
 
-<header>
-  <div class="wrap nav">
-    <div class="logo"><div class="dot">语</div>YYC³ AI小语</div>
-    <nav>
-      <a href="#features">能力</a>
-      <a href="#arch">架构</a>
-      <a href="#docs">文档</a>
-      <a class="hide-m" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion" target="_blank">GitHub ↗</a>
-    </nav>
-  </div>
-</header>
-
-<div class="wrap hero">
-  <img src="YYC3-Family.png" alt="YYC³ Family">
-  <h1>0-22 岁全周期 <span>AI 成长守护</span></h1>
-  <p>六大 AI 角色 · 真实大模型对话 · 作业批改 · 语音陪伴 · 成长记录与勋章——
-  多版本家族收敛后的统一基线，测试、安全与持久化全面达标。</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion" target="_blank">⭐ GitHub 仓库</a>
-    <a class="btn btn-ghost" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/developer-guide.md" target="_blank">📖 开发者指南</a>
-  </div>
-  <div class="badges">
-    <span class="pill">CI 流水线 <b>双阶段全绿</b></span>
-    <span class="pill">单元测试 <b>497 / 0</b></span>
-    <span class="pill">依赖告警 <b>0</b></span>
-    <span class="pill">SQLite <b>真实持久化</b></span>
-    <span class="pill">AI <b>GLM-5.1 在线</b></span>
-  </div>
-</div>
-
-<section id="features">
-  <div class="wrap">
-    <h2>核心能力</h2>
-    <p class="sub">全部为当前仓库已实现并经生产冒烟验证的能力</p>
-    <div class="grid">
-      <div class="card"><div class="ico">🗣️</div><h3>真实 AI 对话</h3><p>BigModel GLM-5.1 · 六角色提示词编排 · SSE 流式 · 无密钥自动降级本地回复</p></div>
-      <div class="card"><div class="ico">📝</div><h3>作业批改与语音</h3><p>图片批改 · 语音转写 · CogTTS 合成，全部经服务端代理，浏览器零密钥</p></div>
-      <div class="card"><div class="ico">💾</div><h3>真实数据持久化</h3><p>node:sqlite + WAL + 外键约束，儿童档案/成长记录/作业落盘，重启不丢</p></div>
-      <div class="card"><div class="ico">🏅</div><h3>勋章成长体系</h3><p>22 枚勋章 · 10 大套系 · 统计/搜索/解锁 API 与勋章殿堂页面</p></div>
-      <div class="card"><div class="ico">🌐</div><h3>双轨国际化</h3><p>next-intl v4 应用路由 + 自研零依赖 i18n-core（ICU/插件/10 语言）</p></div>
-      <div class="card"><div class="ico">📊</div><h3>可观测与安全</h3><p>Prometheus 指标 · 安全响应头 · 生产 CSP · 密钥服务端边界</p></div>
+    <div class="wrap hero">
+      <img src="YYC3-Family.png" alt="YYC³ Family" />
+      <h1>0-22 岁全周期 <span>AI 成长守护</span></h1>
+      <p>
+        六大 AI 角色 · 真实大模型对话 · 作业批改 · 语音陪伴 · 成长记录与勋章——
+        多版本家族收敛后的统一基线，测试、安全与持久化全面达标。
+      </p>
+      <div class="cta">
+        <a
+          class="btn btn-primary"
+          href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion"
+          target="_blank"
+          >⭐ GitHub 仓库</a
+        >
+        <a
+          class="btn btn-ghost"
+          href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/developer-guide.md"
+          target="_blank"
+          >📖 开发者指南</a
+        >
+      </div>
+      <div class="badges">
+        <span class="pill">CI 流水线 <b>双阶段全绿</b></span>
+        <span class="pill">单元测试 <b>497 / 0</b></span>
+        <span class="pill">依赖告警 <b>0</b></span>
+        <span class="pill">SQLite <b>真实持久化</b></span>
+        <span class="pill">AI <b>GLM-5.1 在线</b></span>
+      </div>
     </div>
-  </div>
-</section>
 
-<section id="arch">
-  <div class="wrap">
-    <h2>系统架构</h2>
-    <p class="sub">四层单仓库 · SSR 优先 · 详细架构图见仓库 README</p>
-    <div class="arch"><pre>
+    <section id="features">
+      <div class="wrap">
+        <h2>核心能力</h2>
+        <p class="sub">全部为当前仓库已实现并经生产冒烟验证的能力</p>
+        <div class="grid">
+          <div class="card">
+            <div class="ico">🗣️</div>
+            <h3>真实 AI 对话</h3>
+            <p>
+              BigModel GLM-5.1 · 六角色提示词编排 · SSE 流式 ·
+              无密钥自动降级本地回复
+            </p>
+          </div>
+          <div class="card">
+            <div class="ico">📝</div>
+            <h3>作业批改与语音</h3>
+            <p>
+              图片批改 · 语音转写 · CogTTS 合成，全部经服务端代理，浏览器零密钥
+            </p>
+          </div>
+          <div class="card">
+            <div class="ico">💾</div>
+            <h3>真实数据持久化</h3>
+            <p>
+              node:sqlite + WAL + 外键约束，儿童档案/成长记录/作业落盘，重启不丢
+            </p>
+          </div>
+          <div class="card">
+            <div class="ico">🏅</div>
+            <h3>勋章成长体系</h3>
+            <p>22 枚勋章 · 10 大套系 · 统计/搜索/解锁 API 与勋章殿堂页面</p>
+          </div>
+          <div class="card">
+            <div class="ico">🌐</div>
+            <h3>双轨国际化</h3>
+            <p>
+              next-intl v4 应用路由 + 自研零依赖 i18n-core（ICU/插件/10 语言）
+            </p>
+          </div>
+          <div class="card">
+            <div class="ico">📊</div>
+            <h3>可观测与安全</h3>
+            <p>Prometheus 指标 · 安全响应头 · 生产 CSP · 密钥服务端边界</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="arch">
+      <div class="wrap">
+        <h2>系统架构</h2>
+        <p class="sub">四层单仓库 · SSR 优先 · 详细架构图见仓库 README</p>
+        <div class="arch">
+          <pre>
 <span class="l1">🖥️ 客户端</span>   React 19 · App Router · AI 浮窗/语音交互 · 20+ 功能页面
         ↓ fetch / SSE
 <span class="l2">🚦 Middleware</span>  next-intl 语言路由（/ 中文 · /en 英文）· 缓存与性能头
@@ -123,29 +399,76 @@
         ↓
 <span class="l4">🧩 服务层</span>     model-provider 统一模型工厂 · SQLite 数据层 · badgeService · i18n-core
         ↓
-💾 数据       data/yyc3.db（WAL）· BigModel 开放平台 · fal.ai 生图</pre></div>
-  </div>
-</section>
+💾 数据       data/yyc3.db（WAL）· BigModel 开放平台 · fal.ai 生图</pre>
+        </div>
+      </div>
+    </section>
 
-<section id="docs">
-  <div class="wrap">
-    <h2>文档与资源</h2>
-    <p class="sub">标准合规的全套开发者文档</p>
-    <div class="links">
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/developer-guide.md" target="_blank"><span class="i">🛠</span><div>开发者指南<small>环境 · 命令 · 密钥 · 坑表</small></div></a>
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/architecture.md" target="_blank"><span class="i">🏗</span><div>架构设计<small>分层 · 选型 · ADR</small></div></a>
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/api-reference.md" target="_blank"><span class="i">🔌</span><div>API 参考<small>15 个路由 · 示例</small></div></a>
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/deployment.md" target="_blank"><span class="i">🚀</span><div>部署指南<small>Pages · SSR · 运维</small></div></a>
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/testing.md" target="_blank"><span class="i">🧪</span><div>测试指南<small>规范 · 覆盖地图</small></div></a>
-      <a class="link" href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/actions" target="_blank"><span class="i">⚙️</span><div>CI/CD<small>质量门禁 + 生产冒烟</small></div></a>
-    </div>
-  </div>
-</section>
+    <section id="docs">
+      <div class="wrap">
+        <h2>文档与资源</h2>
+        <p class="sub">标准合规的全套开发者文档</p>
+        <div class="links">
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/developer-guide.md"
+            target="_blank"
+            ><span class="i">🛠</span>
+            <div>开发者指南<small>环境 · 命令 · 密钥 · 坑表</small></div></a
+          >
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/architecture.md"
+            target="_blank"
+            ><span class="i">🏗</span>
+            <div>架构设计<small>分层 · 选型 · ADR</small></div></a
+          >
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/api-reference.md"
+            target="_blank"
+            ><span class="i">🔌</span>
+            <div>API 参考<small>15 个路由 · 示例</small></div></a
+          >
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/deployment.md"
+            target="_blank"
+            ><span class="i">🚀</span>
+            <div>部署指南<small>Pages · SSR · 运维</small></div></a
+          >
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/blob/main/docs/testing.md"
+            target="_blank"
+            ><span class="i">🧪</span>
+            <div>测试指南<small>规范 · 覆盖地图</small></div></a
+          >
+          <a
+            class="link"
+            href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion/actions"
+            target="_blank"
+            ><span class="i">⚙️</span>
+            <div>CI/CD<small>质量门禁 + 生产冒烟</small></div></a
+          >
+        </div>
+      </div>
+    </section>
 
-<footer class="wrap">
-  <p><b>YanYuCloudCube ™</b> · YYC³ AI小语 · 智能成长守护系统 — 统一基线 v3.2 · MIT License · <a href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion" target="_blank">YYC-Cube/YYC3-AI-Growth-Companion</a></p>
-  <p style="margin-top:6px">本页为静态着陆页（自动部署）；完整应用含 SSR / API / SQLite，部署方案见文档。</p>
-</footer>
-
-</body>
+    <footer class="wrap">
+      <p>
+        <b>YanYuCloudCube ™</b> · YYC³ AI小语 · 智能成长守护系统 — 统一基线 v3.4
+        · MIT License ·
+        <a
+          href="https://github.com/YYC-Cube/YYC3-AI-Growth-Companion"
+          target="_blank"
+          >YYC-Cube/YYC3-AI-Growth-Companion</a
+        >
+      </p>
+      <p style="margin-top: 6px">
+        本页为静态着陆页（自动部署）；完整应用含 SSR / API /
+        SQLite，部署方案见文档。
+      </p>
+    </footer>
+  </body>
 </html>
