@@ -1,3 +1,8 @@
+> **⚠️ 本仓库已冻结（2026-11-20）**
+>
+> 不再维护，代码只读。唯一现役主线：**[YYC3-Baby-MoYu](https://github.com/YYC-Cube/YYC3-Baby-MoYu)**。
+> 工程能力（统一模型工厂、Prometheus 指标端点、TTS 服务端代理、生产冒烟 CI、预测引擎可视化）已并入主线。
+
 <div align="center">
 
 <img src="public/YYC3-Family.png" alt="YYC³ Family" width="100%" />
